@@ -30,8 +30,9 @@
 - Stop immediately for causality/cache/gradient failure, NaN, data leakage, or
   a device-hour limit. Never change B-only hyperparameters after launch.
 
-The source of truth for semantics and claim boundaries is the packaged protocol
-under `../CED_IR_Probe_v0.1/CED_IR_Probe_v0_1`.
+The source of truth for semantics and claim boundaries is this file together
+with `ARCHITECTURE.md`, `RESULTS.md`, and the frozen JSON configuration.
+
 
 ## Pre-launch execution amendment (2026-09-21 16:18+08:00)
 

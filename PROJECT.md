@@ -9,8 +9,9 @@ CED-style decoder can learn to use a shared long-range interface whose shape is
 changed from `N x d` to `N/2 x 2d`, without retaining a hidden token-level
 global cache. It is not a post-training migration experiment.
 
-The frozen protocol is in `protocol.md`. The source planning package remains at
-`../CED_IR_Probe_v0.1/CED_IR_Probe_v0_1` and is treated as read-only evidence.
+The frozen protocol is in `protocol.md`. The repository is self-contained;
+`GPT_CONTEXT.md`, `RESULTS.md`, and `ARCHITECTURE.md` provide the concise
+research context that was originally spread across the planning materials.
 
 ## G1 commands
 
