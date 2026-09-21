@@ -116,12 +116,47 @@ GATE_FAMILY_CLEANLY_DECODABLE
 Layer 0 is the decisive leakage control: q-only is at chance, while adding the
 known correct block raises joint-linear accuracy to 99.0% and the exact
 gate-family bilinear probe to essentially 100% in every phase and head. Thus
-physical left/right identity is cleanly present in the frozen query--block
-geometry. The earlier gate failure cannot be interpreted as missing address
-information; it instead implicates coarse-weight dilution, indirect LM credit
-assignment, and/or incompatibility with the frozen output reader. This probe is
-not an LM repair and does not show that the decoded relation can be consumed by
-the existing reader.
+physical left/right label is cleanly decodable from the frozen query--block
+features. This probe is not an LM repair and does not show that the decoded
+label is a query-specific address relation or can be consumed by the reader.
+
+The stronger query--block address interpretation is superseded by the matched
+permutation control below. The pre-registered probe verdict remains a statement
+about label decodability.
+
+## Matched record-permutation shortcut control
+
+The physical label has a deterministic formatting shortcut. For record index
+`i`, packing phase `p`, and digit ordinal `j`, the source position is
+
+```text
+4 + p + 8*i + j
+```
+
+and the slot is `(p+j) mod 2`, independent of record identity, query key, and
+digit value. The trained probe was reproduced and evaluated under fixed-point-
+free cyclic record permutations that preserve phase, ordinal, target, and
+marginal features while breaking query--record matching.
+
+Primary layer-0, digit-0, rank-16 bilinear accuracy:
+
+| Matched | Query cyclic | Block cyclic | Pair-preserving cyclic |
+|---:|---:|---:|---:|
+| 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+
+Digit 0 is the cleanest condition because its query is at `ANS` and contains no
+previous answer digit. Every other mismatched ordinal also remains above 0.999.
+The frozen control verdict is:
+
+```text
+STRUCTURAL_SHORTCUT_DOMINANT
+```
+
+Formatting parity is sufficient for near-perfect physical-slot decoding. The
+probe neither establishes nor rules out an additional pair-specific signal,
+but saturated accuracy cannot be used as evidence that B learned semantic
+query-to-record addressing. The proposed oracle-routing intervention is not
+motivated by this probe because its pair-specific precondition failed.
 
 ## Resource observations are not a systems verdict
 
@@ -140,6 +175,8 @@ speedup.
 - Gate verdict: `runs/g1_b_learned_slot_c16_u0512_20260921/VERDICT.md`
 - Addressing audit: `runs/address_audit_v01/AUDIT.md` and `audit.json`
 - Supervised slot probe: `runs/slot_probe_v01/PROBE.md` and `summary.json`
+- Matched permutation control: `runs/slot_permutation_v01/PROBE.md` and
+  `summary.json`
 - Per-example evidence: the corresponding `test_samples*.jsonl` files
 
 The paired test examples describe sampling uncertainty only. This project used

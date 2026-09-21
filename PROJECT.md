@@ -2,7 +2,7 @@
 
 Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, the
 zero-training addressing audit, and the supervised oracle-block slot probe are
-complete.
+complete. The matched record-permutation shortcut control is also complete.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
@@ -48,5 +48,7 @@ layer 0 and diffuse in layer 1, so the failure is not explained by one uniform
 The directly supervised follow-up is in `runs/slot_probe_v01/PROBE.md`. With
 the correct packed block supplied, the same rank-16 bilinear family decodes the
 physical slot at essentially 100% held-out accuracy. The frozen representation
-therefore contains the slot relation; the earlier LM-trained gate failed to
-turn that relation into task recovery.
+therefore makes the slot label decodable. However, the matched permutation
+control leaves accuracy at 100% after queries and blocks are deliberately
+mismatched across records. Formatting parity is sufficient to saturate the
+probe, which does not establish a query-specific address relation.

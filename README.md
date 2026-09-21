@@ -41,8 +41,10 @@ fields are centralized in [`RESULTS.md`](RESULTS.md).
 A subsequent directly supervised oracle-block probe changes the mechanism
 interpretation: the rank-16 bilinear gate family decodes the physical source
 slot at essentially 100% held-out accuracy when given the correct block. Thus
-the slot relation exists in frozen B, but the original coarse-attention/LM-loss/
-frozen-reader path does not learn to use it.
+the slot label is decodable. A matched record-permutation control then showed
+that deliberately mismatched queries and blocks retain 100% accuracy: fixed
+record formatting supplies a sufficient parity shortcut. The probe does not
+establish that B learned a query-specific source-address relation.
 
 This result does not establish that all packed representations fail. It rejects
 the tested one-key-per-block reader and the tested frozen-backbone low-rank slot
@@ -62,7 +64,7 @@ claim boundary.
 - `scripts/audit_addressing.py`: zero-training routing, slot, compiler, and
   phase audit
 - `scripts/probe_physical_slot.py`: directly supervised frozen-backbone slot
-  decodability probe
+  decodability probe and matched record-permutation control
 - `tests/`: causality, cache, replay, gradient, shape and gate-equivalence tests
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
@@ -84,3 +86,5 @@ The completed addressing audit is summarized in
 per-layer and per-head measurements are in `audit.json` in the same directory.
 The supervised follow-up is in
 [`runs/slot_probe_v01/PROBE.md`](runs/slot_probe_v01/PROBE.md).
+The shortcut control is in
+[`runs/slot_permutation_v01/PROBE.md`](runs/slot_permutation_v01/PROBE.md).

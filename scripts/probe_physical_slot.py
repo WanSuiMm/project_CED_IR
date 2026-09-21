@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import torch
 import torch.nn.functional as F
 
-from ced_ir import CEDIRModel, SlotProbeSuite, make_batch
+from ced_ir import CEDIRModel, SlotProbeSuite, make_batch, permute_record_pairs
 from train_g1 import atomic_json, autocast_context, build_configs, file_sha256
 
 
@@ -168,6 +168,59 @@ def evaluate(model, capture, suites, data_cfg, split, count, batch_size, device)
     return {"split": split, "examples": count, "layers": result}
 
 
+@torch.inference_mode()
+def evaluate_permutations(model, capture, suites, data_cfg, count, batch_size, device):
+    conditions = ("matched", "query_cyclic", "block_cyclic", "paired_cyclic")
+    records = data_cfg.query_count
+    digits = data_cfg.value_digits
+    stats = {}
+    for condition in conditions:
+        stats[condition] = []
+        for _ in suites:
+            stats[condition].append({
+                method: {"correct": [[0] * model.cfg.heads for _ in range(digits)],
+                         "count": [[0] * model.cfg.heads for _ in range(digits)]}
+                for method in METHODS
+            })
+    for first in range(0, count, batch_size):
+        batch = make_batch(data_cfg, "test", range(first, min(first + batch_size, count)), device)
+        features, target = extract(model, capture, batch, device)
+        for condition in conditions:
+            for layer, suite in enumerate(suites):
+                query, slots = features[layer]
+                query_c, slots_c, target_c = permute_record_pairs(
+                    query, slots, target, records, digits, condition)
+                expanded = target_c[:, :, None].expand(-1, -1, model.cfg.heads)
+                for method, logits in suite(query_c, slots_c).items():
+                    correct = (logits.argmax(dim=-1) == expanded).view(
+                        query.shape[0], records, digits, model.cfg.heads)
+                    item = stats[condition][layer][method]
+                    for ordinal in range(digits):
+                        for head in range(model.cfg.heads):
+                            values = correct[:, :, ordinal, head]
+                            item["correct"][ordinal][head] += int(values.sum())
+                            item["count"][ordinal][head] += values.numel()
+    result = {}
+    for condition in conditions:
+        layers = []
+        for layer in range(len(suites)):
+            methods = {}
+            for method in METHODS:
+                item = stats[condition][layer][method]
+                ordinal_accuracy = []
+                for ordinal in range(digits):
+                    heads = [item["correct"][ordinal][head] /
+                             item["count"][ordinal][head]
+                             for head in range(model.cfg.heads)]
+                    ordinal_accuracy.append({"ordinal": ordinal,
+                                             "head_accuracy": heads,
+                                             "head_macro_accuracy": sum(heads) / len(heads)})
+                methods[method] = {"ordinal_accuracy": ordinal_accuracy}
+            layers.append({"layer": layer, "methods": methods})
+        result[condition] = {"layers": layers}
+    return {"split": "test", "examples": count, "conditions": result}
+
+
 def decide(test: dict) -> tuple[str, list[str]]:
     notes = []
     gate_clean = False
@@ -192,6 +245,21 @@ def decide(test: dict) -> tuple[str, list[str]]:
     return "INTERMEDIATE_OR_CONTROL_CONFOUNDED", notes
 
 
+def decide_permutation(control: dict) -> tuple[str, dict[str, float]]:
+    values = {}
+    for short, condition in (("M", "matched"), ("Q", "query_cyclic"),
+                             ("Z", "block_cyclic"), ("P", "paired_cyclic")):
+        values[short] = control["conditions"][condition]["layers"][0]["methods"][
+            "bilinear"]["ordinal_accuracy"][0]["head_macro_accuracy"]
+    if values["M"] < 0.90 or values["P"] < 0.90:
+        return "PERMUTATION_CONTROL_INVALID", values
+    if values["Q"] <= 0.60 and values["Z"] <= 0.60:
+        return "PAIR_SPECIFIC_ADDRESS_SUPPORTED", values
+    if values["Q"] >= 0.90 and values["Z"] >= 0.90:
+        return "STRUCTURAL_SHORTCUT_DOMINANT", values
+    return "MIXED_PAIR_AND_STRUCTURAL_SIGNAL", values
+
+
 def write_markdown(path: Path, report: dict) -> None:
     lines = ["# Supervised oracle-block physical-slot probe", "",
              f"Formal verdict: `{report['verdict']}`", "",
@@ -205,6 +273,16 @@ def write_markdown(path: Path, report: dict) -> None:
             heads = result["head_accuracy"]
             lines.append(f"| {layer['layer']} | {method} | {result['head_macro_accuracy']:.4f} | "
                          + " | ".join(f"{value:.4f}" for value in heads) + " |")
+    if "permutation_control" in report:
+        lines += ["", "## Matched record-permutation control", "",
+                  f"Control verdict: `{report['permutation_verdict']}`", "",
+                  "Primary layer-0 bilinear digit-0 accuracy:", "",
+                  "| matched | query cyclic | block cyclic | paired cyclic |",
+                  "|---:|---:|---:|---:|",
+                  f"| {report['permutation_primary']['M']:.4f} | "
+                  f"{report['permutation_primary']['Q']:.4f} | "
+                  f"{report['permutation_primary']['Z']:.4f} | "
+                  f"{report['permutation_primary']['P']:.4f} |"]
     lines += ["", "## Qualification", "",
               "Synthetic learnability control: " + ", ".join(
                   f"`{key}={value:.3f}`" for key, value in report["synthetic_control"].items()),
@@ -266,10 +344,13 @@ def main() -> None:
                               args.validation_examples, args.batch_size, device)
         test = evaluate(model, capture, suites, data_cfg, "test",
                         args.test_examples, args.batch_size, device)
+        permutation_control = evaluate_permutations(
+            model, capture, suites, data_cfg, args.test_examples, args.batch_size, device)
     finally:
         for handle in handles:
             handle.remove()
     verdict, notes = decide(test)
+    permutation_verdict, permutation_primary = decide_permutation(permutation_control)
     report = {
         "case_id": raw["case_id"],
         "probe": "SUPERVISED_ORACLE_BLOCK_PHYSICAL_SLOT_V01",
@@ -285,8 +366,14 @@ def main() -> None:
         "test": test,
         "verdict": verdict,
         "notes": notes,
+        "permutation_protocol": "slot_permutation_protocol.md",
+        "permutation_control": permutation_control,
+        "permutation_verdict": permutation_verdict,
+        "permutation_primary": permutation_primary,
     }
     args.output.mkdir(parents=True, exist_ok=True)
+    torch.save({"suites": suites.state_dict(), "train": report["train"]},
+               args.output / "probe_checkpoint.pt")
     atomic_json(args.output / "summary.json", report)
     write_markdown(args.output / "PROBE.md", report)
     print(json.dumps(report, indent=2, sort_keys=True))

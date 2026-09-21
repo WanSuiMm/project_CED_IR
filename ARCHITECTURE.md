@@ -109,5 +109,8 @@ is positive only when `N > 2d`. These formulas are not wall-clock claims.
 - `audit_addressing.py`: read-only checkpoint audit of coarse block routing,
   physical-slot prediction, compiler geometry, and phase-conditioned task loss
 - `probe_physical_slot.py`: frozen-backbone, oracle-block supervised probe with
-  q-only, z-only, joint-linear, and gate-family bilinear controls
+  q-only, z-only, joint-linear, gate-family bilinear, and matched record-
+  permutation controls
 - `probes.SlotProbeSuite`: head-wise implementations of the four probe families
+- `probes.permute_record_pairs`: fixed-point-free record rotation preserving
+  phase, digit ordinal, label, and marginal feature distributions

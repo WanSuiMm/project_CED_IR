@@ -6,6 +6,33 @@ import torch
 from torch import nn
 
 
+def permute_record_pairs(query: torch.Tensor, slots: torch.Tensor,
+                         target: torch.Tensor, record_count: int,
+                         digit_count: int, condition: str):
+    """Apply a fixed-point-free record rotation while preserving digit ordinal."""
+    if query.shape[1] != record_count * digit_count or target.shape[1] != query.shape[1]:
+        raise ValueError("record/digit shape does not match flattened query count")
+    batch = query.shape[0]
+    query_view = query.view(batch, record_count, digit_count, *query.shape[2:])
+    slots_view = slots.view(batch, record_count, digit_count, *slots.shape[2:])
+    target_view = target.view(batch, record_count, digit_count)
+    if not bool((target_view == target_view[:, :1]).all()):
+        raise ValueError("physical-slot target is not record-invariant within ordinal")
+    if condition == "matched":
+        pass
+    elif condition == "query_cyclic":
+        query_view = torch.roll(query_view, shifts=1, dims=1)
+    elif condition == "block_cyclic":
+        slots_view = torch.roll(slots_view, shifts=1, dims=1)
+    elif condition == "paired_cyclic":
+        query_view = torch.roll(query_view, shifts=1, dims=1)
+        slots_view = torch.roll(slots_view, shifts=1, dims=1)
+    else:
+        raise ValueError(f"unknown permutation condition: {condition}")
+    return (query_view.reshape_as(query), slots_view.reshape_as(slots),
+            target_view.reshape_as(target))
+
+
 class SlotProbeSuite(nn.Module):
     """Head-wise controls for decoding a known block's physical source slot."""
 

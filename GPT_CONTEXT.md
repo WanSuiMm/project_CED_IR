@@ -65,6 +65,7 @@ resolution.
 - gate diagnostic: `FROZEN_B_LOW_RANK_SLOT_GATE_FAIL`
 - zero-training follow-up: `ADDRESSING_AUDIT_COMPLETE`
 - supervised oracle-block probe: `GATE_FAMILY_CLEANLY_DECODABLE`
+- address-relation status: `STRUCTURAL_SHORTCUT_DOMINANT`
 
 ## Code routing
 
@@ -80,6 +81,8 @@ resolution.
 - Aggregate evidence: `RESULTS.md` and each run's `summary.json`
 - Mechanistic evidence: `runs/address_audit_v01/AUDIT.md` and `audit.json`
 - Supervised decodability evidence: `runs/slot_probe_v01/PROBE.md` and
+  `summary.json`
+- Matched permutation control: `runs/slot_permutation_v01/PROBE.md` and
   `summary.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
@@ -107,5 +110,13 @@ On the independent test split, the rank-16 bilinear family reaches essentially
 100% physical-slot accuracy in both layers. In layer 0, q-only remains at 49.9%,
 while q+z linear reaches 99.0%, so the result is not explained by a query-only
 packing rule. Physical slot is cleanly decodable from the frozen query--correct-
-block relation. The failed LM-trained gate therefore diagnoses credit/routing/
-reader incompatibility, not absence of the address relation in B.
+block features, but that alone does not identify a query-specific relation.
+
+The matched record-permutation control exploits the fact that physical slot is
+deterministically `(phase + digit ordinal) mod 2`. For layer 0, digit 0,
+bilinear accuracy remains 1.0 for matched pairs, query-cyclic mismatches,
+block-cyclic mismatches, and pair-preserving cyclic controls. All other
+ordinals also remain above 0.999 when query identity and source-record identity
+are deliberately mismatched. Formatting parity is sufficient to saturate the
+probe. `GATE_FAMILY_CLEANLY_DECODABLE` is therefore a label-decoding metric,
+not evidence that B learned semantic query-to-record addressing.
