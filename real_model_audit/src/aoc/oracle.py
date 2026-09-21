@@ -90,6 +90,28 @@ def _partition_initialization(
     )
 
 
+def _pair_split_initialization(
+    keys: torch.Tensor,
+    values: torch.Tensor,
+    c: int,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Non-identity c=r start made by duplicating adjacent pair means.
+
+    This deliberately destroys within-pair distinctions while preserving the
+    correct latent cardinality and approximate mass. It is used only to test
+    whether the optimizer can recover a known-to-exist 8-record solution.
+    """
+    r = keys.shape[-2]
+    if c != r or r % 2:
+        raise ValueError("pair_split requires even c == source record count")
+    pair_k = keys.reshape(*keys.shape[:-2], r // 2, 2, keys.shape[-1]).mean(dim=-2)
+    pair_v = values.reshape(*values.shape[:-2], r // 2, 2, values.shape[-1]).mean(dim=-2)
+    init_k = pair_k.repeat_interleave(2, dim=-2)
+    init_v = pair_v.repeat_interleave(2, dim=-2)
+    init_b = torch.zeros(*keys.shape[:-2], c, device=keys.device, dtype=keys.dtype)
+    return init_k, init_v, init_b
+
+
 def fit_oracle(
     q: torch.Tensor,
     source_keys: torch.Tensor,
@@ -101,10 +123,17 @@ def fit_oracle(
     steps: int = 250,
     lr: float = 0.05,
     seed: int = 0,
+    init_mode: str = "partition",
+    noise_scale: float = 0.01,
 ) -> OracleResult:
     """Fit independent latent records for every [block, KV-head] unit."""
     true_log_z, true_mu = block_targets(q, source_keys, source_values, scale)
-    init_k, init_v, init_b = _partition_initialization(source_keys, source_values, c)
+    if init_mode == "partition":
+        init_k, init_v, init_b = _partition_initialization(source_keys, source_values, c)
+    elif init_mode == "pair_split":
+        init_k, init_v, init_b = _pair_split_initialization(source_keys, source_values, c)
+    else:
+        raise ValueError(f"unknown init_mode: {init_mode}")
     # Optimize oracle parameters in fp32 even when the frozen model is bf16.
     init_k, init_v, init_b = init_k.float(), init_v.float(), init_b.float()
     generator = torch.Generator(device=source_keys.device).manual_seed(seed)
@@ -113,9 +142,9 @@ def fit_oracle(
     v = init_v.unsqueeze(0).expand(shape_k).clone()
     b = init_b.unsqueeze(0).expand((restarts,) + init_b.shape).clone()
     if restarts > 1:
-        k[1:] += 0.01 * torch.randn(k[1:].shape, generator=generator, device=k.device)
-        v[1:] += 0.01 * torch.randn(v[1:].shape, generator=generator, device=v.device)
-        b[1:] += 0.01 * torch.randn(b[1:].shape, generator=generator, device=b.device)
+        k[1:] += noise_scale * torch.randn(k[1:].shape, generator=generator, device=k.device)
+        v[1:] += noise_scale * torch.randn(v[1:].shape, generator=generator, device=v.device)
+        b[1:] += noise_scale * torch.randn(b[1:].shape, generator=generator, device=b.device)
     k.requires_grad_(True)
     v.requires_grad_(True)
     b.requires_grad_(True)

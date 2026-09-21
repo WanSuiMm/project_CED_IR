@@ -43,13 +43,12 @@ checkpoint did not recover performance (8.08%). Exact numbers and formal status
 fields are centralized in [`RESULTS.md`](RESULTS.md).
 
 The real-model branch audits the same underlying hypothesis directly in frozen
-Qwen3-0.6B attention. Its qualified v0.1 run found that the tested `8->4`
-oracle missed both held-out operator thresholds in all 36 sequence-layer units.
-However, the fixed old region carried only 0.568% median attention mass, below
-the preregistered causal-relevance threshold, so the formal verdict is
-`INCONCLUSIVE_LOW_MASS`. See
-[`real_model_audit/RESULTS.md`](real_model_audit/RESULTS.md). No compiler or
-continued pretraining was authorized by this result.
+Qwen3-0.6B attention. The final R1b follow-up selected old regions using a
+disjoint calibration span and added a non-identity `8->8` optimizer-recovery
+control. Exact reconstruction qualified, but learned `8->8` recovery failed on
+held-out queries, and median test attention mass was only 0.391%. The formal
+verdict is `ORACLE_OPTIMIZER_UNQUALIFIED`; the local operator-compression branch
+is stopped. See [`real_model_audit/RESULTS.md`](real_model_audit/RESULTS.md).
 
 A subsequent directly supervised oracle-block probe changes the mechanism
 interpretation: the rank-16 bilinear gate family decodes the physical source
@@ -79,8 +78,8 @@ claim boundary.
 - `scripts/probe_physical_slot.py`: directly supervised frozen-backbone slot
   decodability probe and matched record-permutation control
 - `tests/`: causality, cache, replay, gradient, shape and gate-equivalence tests
-- `real_model_audit/`: frozen-Qwen attention-operator oracle protocol,
-  implementation, tests, and qualified R0/R1 evidence
+- `real_model_audit/`: frozen-Qwen attention-operator oracle protocols,
+  implementation, tests, preserved v0.1 evidence, and terminal R1b audit
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
 

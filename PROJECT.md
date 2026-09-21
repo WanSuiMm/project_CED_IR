@@ -3,7 +3,7 @@
 Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, the
 zero-training addressing audit, and the supervised oracle-block slot probe are
 complete. The matched record-permutation shortcut control and the frozen-Qwen
-R0/R1 attention-operator audit are also complete.
+R0/R1 plus final R1b attention-operator audits are also complete.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
@@ -55,7 +55,8 @@ control leaves accuracy at 100% after queries and blocks are deliberately
 mismatched across records. Formatting parity is sufficient to saturate the
 probe, which does not establish a query-specific address relation.
 
-The real-model branch is in `real_model_audit/`. Its qualified v0.1 run has
-formal verdict `INCONCLUSIVE_LOW_MASS`: `8->4` missed both held-out operator
-thresholds in all 36 units, while the selected old region carried only 0.568%
-median attention mass. Compiler training and model adaptation remain frozen.
+The real-model branch is in `real_model_audit/`. Its final R1b audit passed the
+exact implementation controls but received `ORACLE_OPTIMIZER_UNQUALIFIED`:
+non-identity `8->8` recovery failed on independent test queries, while even the
+calibration-selected region retained only 0.391% median test attention mass.
+This branch is stopped; compiler training and model adaptation remain frozen.

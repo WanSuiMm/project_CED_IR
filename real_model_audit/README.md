@@ -17,15 +17,17 @@ synthetic packed-interface failure
 ## Read in this order
 
 1. [`RESULTS.md`](RESULTS.md) — interpretation and claim boundary.
-2. [`PROTOCOL.md`](PROTOCOL.md) — frozen R0/R1 design and stop conditions.
-3. [`runs/r01_qwen3_06b_v03/RESULTS.md`](runs/r01_qwen3_06b_v03/RESULTS.md) — generated aggregate.
-4. [`runs/r01_qwen3_06b_v03/summary.json`](runs/r01_qwen3_06b_v03/summary.json) — sanitized machine-readable evidence.
-5. [`scripts/run_r01_gate.py`](scripts/run_r01_gate.py) and
+2. [`R1B_PROTOCOL.md`](R1B_PROTOCOL.md) — frozen final audit and decision order.
+3. [`runs/r1b_high_mass_v01/RESULTS.md`](runs/r1b_high_mass_v01/RESULTS.md) — generated final aggregate.
+4. [`runs/r1b_high_mass_v01/summary.json`](runs/r1b_high_mass_v01/summary.json) — sanitized per-unit evidence.
+5. [`scripts/run_r1b_gate.py`](scripts/run_r1b_gate.py) and
    [`src/aoc/oracle.py`](src/aoc/oracle.py) — implementation.
+6. [`PROTOCOL.md`](PROTOCOL.md) and `runs/r01_qwen3_06b_v03/` — preserved v0.1 protocol and evidence.
 
-The formal v0.1 verdict is `INCONCLUSIVE_LOW_MASS`. The tested `8->4` oracle
-met neither operator-error threshold in any of 36 sequence-layer units, but the
-fixed old region received only 0.568% median attention mass. R2 compiler
+The terminal R1b verdict is `ORACLE_OPTIMIZER_UNQUALIFIED`. Exact reconstruction
+qualified, but the non-identity `8->8` optimizer control failed on held-out
+queries. The calibration-selected region also retained only 0.391% median test
+attention mass. The local operator-compression branch is stopped; R2 compiler
 training and R3 adaptation remain frozen.
 
 ## Tests

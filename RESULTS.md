@@ -189,6 +189,25 @@ This result does not authorize the amortized compiler or adaptation stages. It
 is also not a universal impossibility result. The exact claim boundary and any
 permitted follow-up are in `real_model_audit/RESULTS.md`.
 
+### Final R1b follow-up
+
+The single permitted follow-up selected the highest-mass eligible old region
+on `Q_select`, fitted on disjoint `Q_fit`, and tested on disjoint `Q_test`.
+Exact-start `8->8` remained exact, but non-identity `8->8` recovery had median
+test log-Z / conditional-value errors `0.5688 / 0.2062`; `0 / 36` units met
+both 0.05 recovery limits. The formal verdict is:
+
+```text
+ORACLE_OPTIMIZER_UNQUALIFIED
+```
+
+The selection loophole also did not yield a stable high-mass target: median
+mass was `1.0885%` on selection and `0.3914%` on test, with only `3 / 36` units
+retaining at least 2%. Because optimizer recovery precedes mass in the frozen
+decision order, these mass results are descriptive rather than the formal
+verdict. The local `8 -> c` operator-compression branch is stopped, and R2/R3
+remain frozen.
+
 ## Resource observations are not a systems verdict
 
 During training on the same physical RTX 5090, measured input throughput was
@@ -209,8 +228,8 @@ speedup.
 - Matched permutation control: `runs/slot_permutation_v01/PROBE.md` and
   `summary.json`
 - Real-model oracle audit: `real_model_audit/RESULTS.md`,
-  `real_model_audit/runs/r01_qwen3_06b_v03/RESULTS.md`, and sanitized
-  `summary.json`
+  `real_model_audit/runs/r1b_high_mass_v01/RESULTS.md`, and sanitized
+  `summary.json`; v0.1 is preserved under `runs/r01_qwen3_06b_v03/`
 - Per-example evidence: the corresponding `test_samples*.jsonl` files
 
 The paired test examples describe sampling uncertainty only. This project used

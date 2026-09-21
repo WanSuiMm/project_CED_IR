@@ -67,7 +67,8 @@ resolution.
 - zero-training follow-up: `ADDRESSING_AUDIT_COMPLETE`
 - supervised oracle-block probe: `GATE_FAMILY_CLEANLY_DECODABLE`
 - address-relation status: `STRUCTURAL_SHORTCUT_DOMINANT`
-- real-model R0/R1 status: `INCONCLUSIVE_LOW_MASS`
+- real-model R0/R1 v0.1 status: `INCONCLUSIVE_LOW_MASS`
+- real-model final R1b status: `ORACLE_OPTIMIZER_UNQUALIFIED`
 - real-model compiler/adaptation status: `FROZEN_NOT_AUTHORIZED`
 
 ## Code routing
@@ -87,11 +88,13 @@ resolution.
   `summary.json`
 - Matched permutation control: `runs/slot_permutation_v01/PROBE.md` and
   `summary.json`
-- Real-model protocol and interpretation: `real_model_audit/PROTOCOL.md` and
-  `real_model_audit/RESULTS.md`
-- Real-model implementation: `real_model_audit/scripts/run_r01_gate.py` and
+- Real-model final interpretation: `real_model_audit/RESULTS.md`
+- Final frozen protocol: `real_model_audit/R1B_PROTOCOL.md`
+- Final runner and oracle: `real_model_audit/scripts/run_r1b_gate.py` and
   `real_model_audit/src/aoc/oracle.py`
-- Real-model aggregate: `real_model_audit/runs/r01_qwen3_06b_v03/summary.json`
+- Final aggregate: `real_model_audit/runs/r1b_high_mass_v01/summary.json`
+- Preserved v0.1 protocol/run: `real_model_audit/PROTOCOL.md` and
+  `real_model_audit/runs/r01_qwen3_06b_v03/summary.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
 ## Recommended review behavior
@@ -136,3 +139,11 @@ error is 0.278; zero of 36 sequence-layer units meets both 0.10 limits. Yet the
 fixed replaced region carries only 0.568% median attention mass, so tiny global
 KL and delta NLL are not positive compression evidence. Low `QK^T` effective
 rank (median 1.339) likewise does not imply held-out operator preservation.
+
+The terminal R1b follow-up selected candidate regions on `Q_select`, then used
+disjoint `Q_fit` and `Q_test` spans. Exact-start `8->8` remained exact, but a
+non-identity `8->8` start reached median test errors 0.569 (log-Z) and 0.206
+(conditional value), with 0/36 units meeting both 0.05 limits. Thus the learned
+oracle is not qualified to support an `8->4` capacity conclusion. Separately,
+the selected region's median mass fell from 1.089% on selection to 0.391% on
+test, and only 3/36 units retained 2% mass. The branch stops without R2/R3.

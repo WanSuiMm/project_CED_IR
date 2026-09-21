@@ -1,39 +1,70 @@
-# R0/R1 v0.1 result
+# Frozen-Qwen attention-operator audit
 
-## Verdict
+## Final R1b verdict
 
-`INCONCLUSIVE_LOW_MASS`
+`ORACLE_OPTIMIZER_UNQUALIFIED`
 
-The corrected implementation qualified: maximum manual-exact mismatch was
-`0.303%` across the three audited layers, below the preregistered `1%` limit.
-The identity `8->8` replacement was exact.
+R1b was the final small audit permitted after v0.1. It selected the highest-mass
+eligible old 64-token region using `Q_select`, fitted on a later disjoint
+`Q_fit`, and evaluated once on a still later `Q_test`. The model, sources,
+layers, and query layout were frozen in `R1B_PROTOCOL.md`.
 
-The fixed 64-token old region received only `0.568%` median attention mass,
-below the preregistered `2%` causal-relevance threshold. Therefore the very
-small downstream KL and delta NLL are not evidence that compression succeeded.
+The implementation controls passed. Across 36 sequence-layer units, maximum
+manual-exact mismatch was `0.3031%`, and the exact-start `8 -> 8` replacement
+had zero measured fit and test operator error. The non-identity `8 -> 8`
+recovery control did not qualify:
 
-## Operator result
+| Metric | Fit median | Test median | Frozen requirement |
+|---|---:|---:|---:|
+| log-Z RMSE | 0.0199 | 0.5688 | <= 0.02 |
+| conditional-value relative error | 0.0429 | 0.2062 | <= 0.02 |
 
-| latent records | held-out log-Z RMSE | held-out mu relative error | units meeting both 0.10 limits |
-|---:|---:|---:|---:|
-| 1 | 0.899 | 0.518 | 0 / 36 |
-| 2 | 0.775 | 0.397 | 0 / 36 |
-| 4 | 0.534 | 0.278 | 0 / 36 |
+Zero of 36 units had both recovery test errors at or below `0.05`, versus the
+required 75%. The optimizer could fit much of the calibration geometry but did
+not recover the known-to-exist eight-record operator on new queries. Therefore
+the learned-oracle results cannot distinguish insufficient `8 -> 4` capacity
+from optimizer/parameterization failure.
 
-Although the median score-matrix effective rank was only `1.339`, low spectral
-rank did not translate into held-out preservation of block mass and conditional
-value output. This is evidence against inferring functional compressibility from
-`QK^T` spectrum alone.
+## High-mass selection result
 
-## Claim boundary and next gate
+The attempted loophole also did not produce a stable high-mass endpoint:
 
-This run is not a positive existence result and does not authorize an amortized
-compiler or continued pretraining. It also is not a universal impossibility
-result: the region selection produced low-mass blocks, and the run did not log a
-learned `8->8` optimizer-recovery control or separate fit-versus-held-out oracle
-metrics.
+| Query split | Median selected-region attention mass |
+|---|---:|
+| Selection | 1.0885% |
+| Fit | 0.5061% |
+| Test | 0.3914% |
 
-If the question is reopened, the only justified follow-up is a small matched
-audit that selects high-mass old regions using a calibration query span, tests
-on a later disjoint span, records fit and held-out errors, and requires an
-optimized `8->8` oracle to recover the exact operator. R2/R3 remain frozen.
+Only `3 / 36` units retained at least 2% test mass. Formally, the earlier
+optimizer-recovery failure takes precedence in the preregistered decision
+order, so `NO_HIGH_MASS_CANDIDATE` and `NO_STABLE_HIGH_MASS_TARGET` are
+descriptive diagnostics rather than the formal verdict.
+
+For completeness, `8 -> 4` had median fit errors `0.0265 / 0.1574` and test
+errors `0.6152 / 0.3006` for log-Z / conditional value; zero units met both
+test limits. Those numbers are not promoted to a capacity verdict because the
+stronger `8 -> 8` recovery control failed first.
+
+## Scientific decision
+
+The local contiguous attention-operator compression branch stops here. R1b
+closed neither prerequisite for R2: it found no stable high-mass target, and
+the learned oracle did not recover a known exact solution out of sample. No
+compiler training, Qwen adaptation, continued pretraining, kernel work, or
+systems-speed claim is authorized.
+
+This is not a universal impossibility result for learned memory interfaces. It
+is a stop decision for this local `8 -> c` oracle formulation and optimizer
+under the tested frozen-Qwen setting.
+
+## Evidence
+
+- Frozen final protocol: `R1B_PROTOCOL.md`
+- Final generated aggregate: `runs/r1b_high_mass_v01/RESULTS.md`
+- Sanitized per-unit evidence: `runs/r1b_high_mass_v01/summary.json`
+- Final runner: `scripts/run_r1b_gate.py`
+- Oracle implementation and recovery initialization: `src/aoc/oracle.py`
+
+The earlier v0.1 result remains preserved under
+`runs/r01_qwen3_06b_v03/`. Its formal verdict was `INCONCLUSIVE_LOW_MASS`;
+R1b is the terminal follow-up rather than a rewrite of that evidence.

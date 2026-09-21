@@ -43,3 +43,17 @@ def test_oracle_learns_duplicated_records():
     )
     assert zr.median().item() < 1e-2
     assert mr.median().item() < 1e-2
+
+
+def test_pair_split_is_non_identity_and_can_optimize():
+    torch.manual_seed(3)
+    q = torch.randn(1, 2, 32, 6)
+    k = torch.randn(2, 1, 8, 6)
+    v = torch.randn(2, 1, 8, 6)
+    weight = torch.ones(2, 1, 1, 32)
+    result = fit_oracle(
+        q, k, v, weight, c=8, scale=6**-0.5, steps=4,
+        restarts=1, init_mode="pair_split",
+    )
+    assert not torch.allclose(result.keys, k.float())
+    assert torch.isfinite(result.fit_loss).all()
