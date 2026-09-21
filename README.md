@@ -10,15 +10,17 @@ global cache.
 For a fast technical review—especially through a GitHub-connected language
 model—read files in this order:
 
-1. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
+1. [`GPT_HANDOFF.md`](GPT_HANDOFF.md): latest incremental review range and
+   changed evidence
+2. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
    file-routing instructions
-2. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts
-3. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
-4. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
+3. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts
+4. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
+5. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
    experimental contract
-5. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
+6. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
    [`src/ced_ir/synthetic.py`](src/ced_ir/synthetic.py): implementation
-6. [`tests/`](tests): executable correctness claims
+7. [`tests/`](tests): executable correctness claims
 
 The large `test_samples*.jsonl` files are raw evidence. They should not be the
 first files used to understand the project.
@@ -43,6 +45,7 @@ claim boundary.
 
 ## Layout
 
+- `GPT_HANDOFF.md`: latest incremental-review packet and commit range
 - `GPT_CONTEXT.md`: compact entry point for connected LLMs and reviewers
 - `RESULTS.md`: canonical aggregate evidence and claim boundary
 - `ARCHITECTURE.md`: model equations, invariants and source-code map
