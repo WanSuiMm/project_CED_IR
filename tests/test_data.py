@@ -21,8 +21,13 @@ class SyntheticDataTests(unittest.TestCase):
         self.assertEqual(ex["labels"].shape, (512,))
         self.assertEqual(int(ex["loss_mask"].sum()), 32)
         self.assertEqual(ex["query_groups"].shape, (8, 4))
+        self.assertEqual(ex["source_digit_positions"].shape, (8, 4))
+        self.assertEqual(ex["source_record_spans"].shape, (8, 2))
+        self.assertIn(ex["phase"], range(4))
         np.testing.assert_array_equal(ex["labels"][ex["query_groups"]],
                                      ex["labels"][ex["query_groups"]])
+        source_tokens = ex["input_ids"][ex["source_digit_positions"]]
+        np.testing.assert_array_equal(source_tokens, ex["labels"][ex["query_groups"]])
 
     def test_all_examples_respect_contract(self):
         cfg = SyntheticConfig()

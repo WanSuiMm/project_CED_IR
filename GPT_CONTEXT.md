@@ -63,6 +63,7 @@ resolution.
 - `width_compensation_status = UNTESTED`
 - `systems_status = NOT_MEASURED`
 - gate diagnostic: `FROZEN_B_LOW_RANK_SLOT_GATE_FAIL`
+- zero-training follow-up: `ADDRESSING_AUDIT_COMPLETE`
 
 ## Code routing
 
@@ -76,6 +77,7 @@ resolution.
 - Frozen-backbone gate training: `scripts/train_gate.py`
 - Executable invariants: `tests/test_model.py` and `tests/test_data.py`
 - Aggregate evidence: `RESULTS.md` and each run's `summary.json`
+- Mechanistic evidence: `runs/address_audit_v01/AUDIT.md` and `audit.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
 ## Recommended review behavior
@@ -85,3 +87,13 @@ ratios separate from measured training memory and throughput. Do not infer
 single-seed training uncertainty from the per-example test set, and do not turn
 the observed `ln(2)` signature into a stronger causal claim than the gate
 experiment supports.
+
+The zero-training audit narrows the remaining mechanism. The learned compiler
+has only 1.315% cross-half Frobenius energy, so wholesale compiler entanglement
+is not the main explanation. Decoder layer 0 places the correct digit block in
+its top four about 67.4% of the time, while layer 1 does so only about 4.0% of
+the time. On the known correct block, the learned gate assigns the physical
+slot mean probability 0.503 and has 51.9% pooled accuracy. Phase-conditioned
+exact match remains approximately 8% in every phase. Therefore the evidence
+does not support a clean recoverable left/right address bit; addressing quality
+also differs sharply by decoder layer.

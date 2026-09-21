@@ -1,0 +1,327 @@
+{
+  "audit": "ZERO_TRAINING_ADDRESSING_AUDIT_V01",
+  "case_id": "CED_IR_LENGTH_WIDTH_PROBE_V01",
+  "compiler_geometry": {
+    "block_frobenius_energy": [
+      [
+        248.07473754882812,
+        3.606536865234375
+      ],
+      [
+        3.0192699432373047,
+        249.1774444580078
+      ]
+    ],
+    "cross_mixing_ratio": 0.013149625416363078,
+    "relative_distance_from_identity": 0.16552391648292542,
+    "singular_value_max": 1.7029122114181519,
+    "singular_value_median": 0.9650288224220276,
+    "singular_value_min": 0.6570698022842407,
+    "spectral_condition_number": 2.5916762351989746
+  },
+  "config_sha256": "0b0491b59cd458b5d75be8048db92e6d9ffbb6a54147a307d91c0e2063fb1283",
+  "examples": 4096,
+  "models": [
+    {
+      "model": "B_PACK2_WIDE2",
+      "phase": [
+        {
+          "examples_implied": 1006,
+          "four_digit_exact": 0.07765904572564612,
+          "nll": 0.6906700676999556,
+          "phase": 0
+        },
+        {
+          "examples_implied": 1018,
+          "four_digit_exact": 0.08337426326129665,
+          "nll": 0.7026799885603674,
+          "phase": 1
+        },
+        {
+          "examples_implied": 1019,
+          "four_digit_exact": 0.07948969578017664,
+          "nll": 0.6880534250322105,
+          "phase": 2
+        },
+        {
+          "examples_implied": 1053,
+          "four_digit_exact": 0.07763532763532764,
+          "nll": 0.7070150969148474,
+          "phase": 3
+        }
+      ],
+      "routing": {
+        "layers": [
+          {
+            "heads": [
+              {
+                "correct_digit_block_mrr": 0.4409275521757081,
+                "correct_digit_block_top1": 0.21984100341796875,
+                "correct_digit_block_top2": 0.48895263671875,
+                "correct_digit_block_top4": 0.6746826171875,
+                "head": 0,
+                "mean_attention_entropy": 1.3878719438798726,
+                "mean_correct_digit_block_mass": 0.2440727226785384,
+                "mean_source_record_mass": 0.2658392261364497,
+                "observations": 131072
+              },
+              {
+                "correct_digit_block_mrr": 0.4669525052886456,
+                "correct_digit_block_top1": 0.2739715576171875,
+                "correct_digit_block_top2": 0.48775482177734375,
+                "correct_digit_block_top4": 0.6700363159179688,
+                "head": 1,
+                "mean_attention_entropy": 1.339163958095014,
+                "mean_correct_digit_block_mass": 0.26798615808365867,
+                "mean_source_record_mass": 0.29156439390499145,
+                "observations": 131072
+              },
+              {
+                "correct_digit_block_mrr": 0.45463461067993194,
+                "correct_digit_block_top1": 0.24594879150390625,
+                "correct_digit_block_top2": 0.489044189453125,
+                "correct_digit_block_top4": 0.674407958984375,
+                "head": 2,
+                "mean_attention_entropy": 1.325284855440259,
+                "mean_correct_digit_block_mass": 0.25034892052644864,
+                "mean_source_record_mass": 0.2701921440893784,
+                "observations": 131072
+              },
+              {
+                "correct_digit_block_mrr": 0.45226004940923303,
+                "correct_digit_block_top1": 0.24002838134765625,
+                "correct_digit_block_top2": 0.4891510009765625,
+                "correct_digit_block_top4": 0.677490234375,
+                "head": 3,
+                "mean_attention_entropy": 1.3731013499200344,
+                "mean_correct_digit_block_mass": 0.2498692808439955,
+                "mean_source_record_mass": 0.26981202518800274,
+                "observations": 131072
+              }
+            ],
+            "layer": 0
+          },
+          {
+            "heads": [
+              {
+                "correct_digit_block_mrr": 0.05098505505156936,
+                "correct_digit_block_top1": 0.0165863037109375,
+                "correct_digit_block_top2": 0.03063201904296875,
+                "correct_digit_block_top4": 0.0539093017578125,
+                "head": 0,
+                "mean_attention_entropy": 4.669073197990656,
+                "mean_correct_digit_block_mass": 0.008693106259670458,
+                "mean_source_record_mass": 0.021037664235336706,
+                "observations": 131072
+              },
+              {
+                "correct_digit_block_mrr": 0.038080295074905735,
+                "correct_digit_block_top1": 0.00945281982421875,
+                "correct_digit_block_top2": 0.01834869384765625,
+                "correct_digit_block_top4": 0.03568267822265625,
+                "head": 1,
+                "mean_attention_entropy": 4.613816948607564,
+                "mean_correct_digit_block_mass": 0.008356651096619316,
+                "mean_source_record_mass": 0.02109748682778445,
+                "observations": 131072
+              },
+              {
+                "correct_digit_block_mrr": 0.03889837169117527,
+                "correct_digit_block_top1": 0.00983428955078125,
+                "correct_digit_block_top2": 0.01938629150390625,
+                "correct_digit_block_top4": 0.036773681640625,
+                "head": 2,
+                "mean_attention_entropy": 4.617266401648521,
+                "mean_correct_digit_block_mass": 0.008107534378723358,
+                "mean_source_record_mass": 0.02047215540369507,
+                "observations": 131072
+              },
+              {
+                "correct_digit_block_mrr": 0.03679996204300551,
+                "correct_digit_block_top1": 0.00893402099609375,
+                "correct_digit_block_top2": 0.0166778564453125,
+                "correct_digit_block_top4": 0.03316497802734375,
+                "head": 3,
+                "mean_attention_entropy": 4.662721291184425,
+                "mean_correct_digit_block_mass": 0.007900903306108376,
+                "mean_source_record_mass": 0.018068285316985566,
+                "observations": 131072
+              }
+            ],
+            "layer": 1
+          }
+        ],
+        "pooled_layer_head": {
+          "correct_digit_block_mrr": 0.24744230017677182,
+          "correct_digit_block_top1": 0.12807464599609375,
+          "correct_digit_block_top2": 0.2549934387207031,
+          "correct_digit_block_top4": 0.35701847076416016,
+          "mean_attention_entropy": 2.9985374933457933,
+          "mean_correct_digit_block_mass": 0.13066690964672034,
+          "mean_source_record_mass": 0.14726042263782801,
+          "observations": 1048576
+        }
+      }
+    },
+    {
+      "model": "B_LEARNED_SLOT",
+      "phase": [
+        {
+          "examples_implied": 1006,
+          "four_digit_exact": 0.08175944333996024,
+          "nll": 0.686322018000525,
+          "phase": 0
+        },
+        {
+          "examples_implied": 1018,
+          "four_digit_exact": 0.08079567779960707,
+          "nll": 0.6998198205103808,
+          "phase": 1
+        },
+        {
+          "examples_implied": 1019,
+          "four_digit_exact": 0.07948969578017664,
+          "nll": 0.6855987709918597,
+          "phase": 2
+        },
+        {
+          "examples_implied": 1053,
+          "four_digit_exact": 0.0811965811965812,
+          "nll": 0.7037473332281918,
+          "phase": 3
+        }
+      ],
+      "routing": {
+        "layers": [
+          {
+            "heads": [
+              {
+                "correct_digit_block_mrr": 0.4409275521757081,
+                "correct_digit_block_top1": 0.21984100341796875,
+                "correct_digit_block_top2": 0.48895263671875,
+                "correct_digit_block_top4": 0.6746826171875,
+                "head": 0,
+                "mean_attention_entropy": 1.3878719438798726,
+                "mean_correct_digit_block_mass": 0.2440727226785384,
+                "mean_physical_slot_probability_at_digit_block": 0.4991471698740497,
+                "mean_source_record_mass": 0.2658392261364497,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.5062103271484375
+              },
+              {
+                "correct_digit_block_mrr": 0.4669525052886456,
+                "correct_digit_block_top1": 0.2739715576171875,
+                "correct_digit_block_top2": 0.48775482177734375,
+                "correct_digit_block_top4": 0.6700363159179688,
+                "head": 1,
+                "mean_attention_entropy": 1.339163958095014,
+                "mean_correct_digit_block_mass": 0.26798615808365867,
+                "mean_physical_slot_probability_at_digit_block": 0.5050316648557782,
+                "mean_source_record_mass": 0.29156439390499145,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.559783935546875
+              },
+              {
+                "correct_digit_block_mrr": 0.45463461067993194,
+                "correct_digit_block_top1": 0.24594879150390625,
+                "correct_digit_block_top2": 0.489044189453125,
+                "correct_digit_block_top4": 0.674407958984375,
+                "head": 2,
+                "mean_attention_entropy": 1.325284855440259,
+                "mean_correct_digit_block_mass": 0.25034892052644864,
+                "mean_physical_slot_probability_at_digit_block": 0.5008493333589286,
+                "mean_source_record_mass": 0.2701921440893784,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.5091400146484375
+              },
+              {
+                "correct_digit_block_mrr": 0.45226004940923303,
+                "correct_digit_block_top1": 0.24002838134765625,
+                "correct_digit_block_top2": 0.4891510009765625,
+                "correct_digit_block_top4": 0.677490234375,
+                "head": 3,
+                "mean_attention_entropy": 1.3731013499200344,
+                "mean_correct_digit_block_mass": 0.2498692808439955,
+                "mean_physical_slot_probability_at_digit_block": 0.5067444480955601,
+                "mean_source_record_mass": 0.26981202518800274,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.5634231567382812
+              }
+            ],
+            "layer": 0
+          },
+          {
+            "heads": [
+              {
+                "correct_digit_block_mrr": 0.05125785972632002,
+                "correct_digit_block_top1": 0.0167999267578125,
+                "correct_digit_block_top2": 0.0307464599609375,
+                "correct_digit_block_top4": 0.05431365966796875,
+                "head": 0,
+                "mean_attention_entropy": 4.669280869886279,
+                "mean_correct_digit_block_mass": 0.008700560187207884,
+                "mean_physical_slot_probability_at_digit_block": 0.4718157103052363,
+                "mean_source_record_mass": 0.020999010266677942,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.4412078857421875
+              },
+              {
+                "correct_digit_block_mrr": 0.037799863777763676,
+                "correct_digit_block_top1": 0.00945281982421875,
+                "correct_digit_block_top2": 0.01812744140625,
+                "correct_digit_block_top4": 0.035186767578125,
+                "head": 1,
+                "mean_attention_entropy": 4.609137028455734,
+                "mean_correct_digit_block_mass": 0.00832890904530359,
+                "mean_physical_slot_probability_at_digit_block": 0.49772347835823894,
+                "mean_source_record_mass": 0.021039827424829127,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.4855194091796875
+              },
+              {
+                "correct_digit_block_mrr": 0.0383497537477524,
+                "correct_digit_block_top1": 0.009521484375,
+                "correct_digit_block_top2": 0.0189666748046875,
+                "correct_digit_block_top4": 0.03610992431640625,
+                "head": 2,
+                "mean_attention_entropy": 4.6173199955374,
+                "mean_correct_digit_block_mass": 0.008076038595390855,
+                "mean_physical_slot_probability_at_digit_block": 0.5014413560274988,
+                "mean_source_record_mass": 0.020392829246702604,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.512298583984375
+              },
+              {
+                "correct_digit_block_mrr": 0.036872474644042086,
+                "correct_digit_block_top1": 0.00887298583984375,
+                "correct_digit_block_top2": 0.0165557861328125,
+                "correct_digit_block_top4": 0.03334808349609375,
+                "head": 3,
+                "mean_attention_entropy": 4.660760965198278,
+                "mean_correct_digit_block_mass": 0.007958635326758667,
+                "mean_physical_slot_probability_at_digit_block": 0.5382907153107226,
+                "mean_source_record_mass": 0.01806854428650695,
+                "observations": 131072,
+                "physical_slot_accuracy_at_digit_block": 0.5769195556640625
+              }
+            ],
+            "layer": 1
+          }
+        ],
+        "pooled_layer_head": {
+          "correct_digit_block_mrr": 0.2473818336811746,
+          "correct_digit_block_top1": 0.12805461883544922,
+          "correct_digit_block_top2": 0.2549123764038086,
+          "correct_digit_block_top4": 0.3569469451904297,
+          "mean_attention_entropy": 2.997740120801609,
+          "mean_correct_digit_block_mass": 0.13066765316091278,
+          "mean_physical_slot_probability_at_digit_block": 0.5026304845232517,
+          "mean_source_record_mass": 0.14723850006794237,
+          "observations": 1048576,
+          "physical_slot_accuracy_at_digit_block": 0.519312858581543
+        }
+      }
+    }
+  ],
+  "split": "test"
+}

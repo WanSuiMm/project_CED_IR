@@ -216,6 +216,37 @@ class GlobalRead(nn.Module):
             self.gate_slot_proj = nn.Parameter(
                 torch.zeros(cfg.heads, 2, head_width, self.gate_dim))
 
+    def routing_diagnostics(self, x: torch.Tensor, memory: IRMemory,
+                            positions: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor | None]:
+        """Return coarse block weights and optional within-block gate weights.
+
+        This mirrors the regular float inference path and is intentionally
+        separate from the returned activation so an audit cannot affect model
+        behavior.
+        """
+        batch, length, width = x.shape
+        a = width // self.cfg.heads
+        q = _linear(self.query, x).view(batch, length, self.cfg.heads, a).transpose(1, 2)
+        q = _rope(q, positions, self.cfg.rope_base)
+        k = _rope(memory.keys, memory.block_ends, self.cfg.rope_base)
+        scores = torch.matmul(q, k.transpose(-1, -2)) / math.sqrt(a)
+        allowed = memory.block_ends[None, :] <= positions[:, None]
+        scores = scores.float().masked_fill(~allowed[None, None], -torch.inf)
+        valid = allowed.any(dim=-1)
+        scores = torch.where(valid[None, None, :, None], scores, torch.zeros_like(scores))
+        weights = torch.softmax(scores, dim=-1).to(x.dtype)
+        weights = weights * valid[None, None, :, None].to(weights.dtype)
+        if not self.gate_dim:
+            return weights, None
+        slot_values = memory.values.view(batch, self.cfg.heads, -1, 2, a)
+        gate_q = _linear(self.gate_query, x).view(
+            batch, length, self.cfg.heads, self.gate_dim).permute(0, 2, 1, 3)
+        gate_k = torch.einsum("bhmsa,hsac->bhmsc", slot_values,
+                              self.gate_slot_proj.to(slot_values.dtype))
+        gate_logits = torch.einsum("bhtc,bhmsc->bhtms", gate_q, gate_k)
+        gate = torch.softmax(gate_logits.float() / math.sqrt(self.gate_dim), dim=-1).to(x.dtype)
+        return weights, gate
+
     def forward(self, x: torch.Tensor, memory: IRMemory, positions: torch.Tensor,
                 ablate: bool = False) -> torch.Tensor:
         if ablate or memory.block_ends.numel() == 0:

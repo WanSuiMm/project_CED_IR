@@ -1,6 +1,7 @@
 # CED IR Length-Width Probe
 
-Status: G1 A/B and the frozen-backbone low-rank slot-gate diagnostic are complete.
+Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, and the
+zero-training addressing audit are complete.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
@@ -34,3 +35,11 @@ The gate diagnostic verdict is in
 `runs/g1_b_learned_slot_c16_u0512_20260921/VERDICT.md`. The identity-preserving
 gate did not materially improve B, so the claim that a small linearly exposed
 one-bit sub-address alone repairs the frozen B representation is rejected.
+
+The follow-up audit is in `runs/address_audit_v01/AUDIT.md`. It directly
+measures coarse localization, physical-slot prediction, compiler mixing, and
+phase-stratified performance without updating any parameters. The compiler
+largely preserves the two input halves, but the gate remains near 50/50 on the
+known physical slot. Coarse localization is moderately concentrated in decoder
+layer 0 and diffuse in layer 1, so the failure is not explained by one uniform
+"missing slot bit" mechanism.

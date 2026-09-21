@@ -50,6 +50,8 @@ claim boundary.
 - `configs/g1.json`: experiment configuration
 - `src/ced_ir/`: model and deterministic synthetic data generator
 - `scripts/`: G1 and slot-gate training entry points
+- `scripts/audit_addressing.py`: zero-training routing, slot, compiler, and
+  phase audit
 - `tests/`: causality, cache, replay, gradient, shape and gate-equivalence tests
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
@@ -65,3 +67,7 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 The implementation uses PyTorch. Formal GPU runs used BF16 autocast with FP32
 parameters and optimizer state. See `protocol.md` for the complete frozen
 conditions and stopping rules.
+
+The completed addressing audit is summarized in
+[`runs/address_audit_v01/AUDIT.md`](runs/address_audit_v01/AUDIT.md). Its full
+per-layer and per-head measurements are in `audit.json` in the same directory.

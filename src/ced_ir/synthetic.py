@@ -44,10 +44,16 @@ def make_example(cfg: SyntheticConfig, split: str, example_id: int) -> dict[str,
     phase = int(rng.integers(0, 4))
     tokens.extend(rng.integers(cfg.noise_start, cfg.noise_stop, size=phase).tolist())
     key_positions: dict[int, int] = {}
+    digit_positions: dict[int, list[int]] = {}
+    record_spans: dict[int, tuple[int, int]] = {}
     for i in range(cfg.record_count):
+        record_start = len(tokens)
         tokens.append(REC)
         key_positions[i] = len(tokens)
+        digit_start = len(tokens) + 2
         tokens.extend([int(keys[i]), VAL, *values[i].tolist(), SEP])
+        digit_positions[i] = list(range(digit_start, digit_start + cfg.value_digits))
+        record_spans[i] = (record_start, len(tokens) - 1)
 
     query_len = cfg.query_count * (4 + cfg.value_digits)
     total_len = cfg.sequence_length + 1
@@ -58,6 +64,8 @@ def make_example(cfg: SyntheticConfig, split: str, example_id: int) -> dict[str,
 
     target_positions: list[int] = []
     query_groups: list[list[int]] = []
+    source_digit_positions: list[list[int]] = []
+    source_record_spans: list[tuple[int, int]] = []
     for record_idx in query_indices.tolist():
         query_key_position = len(tokens) + 1
         if query_key_position - key_positions[record_idx] <= cfg.min_source_query_gap:
@@ -71,6 +79,8 @@ def make_example(cfg: SyntheticConfig, split: str, example_id: int) -> dict[str,
             tokens.append(int(digit))
         tokens.append(SEP)
         query_groups.append(group)
+        source_digit_positions.append(digit_positions[record_idx])
+        source_record_spans.append(record_spans[record_idx])
     tokens.append(EOS)
 
     if len(tokens) != total_len:
@@ -86,6 +96,9 @@ def make_example(cfg: SyntheticConfig, split: str, example_id: int) -> dict[str,
         "labels": labels,
         "loss_mask": loss_mask,
         "query_groups": np.asarray(query_groups, dtype=np.int64),
+        "source_digit_positions": np.asarray(source_digit_positions, dtype=np.int64),
+        "source_record_spans": np.asarray(source_record_spans, dtype=np.int64),
+        "phase": phase,
         "example_id": example_id,
     }
 
@@ -94,8 +107,10 @@ def make_batch(cfg: SyntheticConfig, split: str, example_ids: Iterable[int],
                device: torch.device | str) -> dict[str, torch.Tensor]:
     examples = [make_example(cfg, split, int(i)) for i in example_ids]
     result: dict[str, torch.Tensor] = {}
-    for key in ("input_ids", "labels", "loss_mask", "query_groups"):
+    for key in ("input_ids", "labels", "loss_mask", "query_groups",
+                "source_digit_positions", "source_record_spans"):
         array = np.stack([e[key] for e in examples])
         result[key] = torch.from_numpy(array).to(device)
+    result["phase"] = torch.tensor([int(e["phase"]) for e in examples], device=device)
     result["example_id"] = torch.tensor([int(e["example_id"]) for e in examples], device=device)
     return result

@@ -106,3 +106,5 @@ is positive only when `N > 2d`. These formulas are not wall-clock claims.
 - `synthetic.make_example`: deterministic leakage-resistant retrieval task
 - `train_g1.evaluate`: frozen evaluation and global-IR intervention
 - `train_gate.py`: qualified frozen-backbone gate diagnostic
+- `audit_addressing.py`: read-only checkpoint audit of coarse block routing,
+  physical-slot prediction, compiler geometry, and phase-conditioned task loss

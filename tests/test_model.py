@@ -127,6 +127,32 @@ class ModelCorrectnessTests(unittest.TestCase):
         self.assertTrue(all(gradient is not None for gradient in slot_gradients))
         self.assertGreater(sum(float(g.abs().sum()) for g in slot_gradients), 0.0)
 
+    def test_routing_diagnostics_are_normalized_and_non_mutating(self):
+        cfg = replace(tiny(2, 2), slot_gate_dim=8)
+        model = CEDIRModel(cfg).float().eval()
+        ids = torch.randint(0, 128, (2, 17))
+        captured = {}
+
+        def inspect(_module, args):
+            x, memory, positions = args[:3]
+            coarse, gate = _module.routing_diagnostics(x, memory, positions)
+            captured["coarse"] = coarse
+            captured["gate"] = gate
+
+        handle = model.decoder[0].global_read.register_forward_pre_hook(inspect)
+        with torch.no_grad():
+            expected = model(ids)
+        handle.remove()
+        with torch.no_grad():
+            actual = model(ids)
+        torch.testing.assert_close(actual, expected)
+        coarse_sum = captured["coarse"].sum(dim=-1)
+        expected_sum = torch.ones_like(coarse_sum)
+        expected_sum[:, :, 0] = 0.0  # no pack-2 block has ended at position zero
+        torch.testing.assert_close(coarse_sum, expected_sum)
+        torch.testing.assert_close(captured["gate"].sum(dim=-1),
+                                   torch.ones_like(captured["gate"].sum(dim=-1)))
+
 
 if __name__ == "__main__":
     unittest.main()
