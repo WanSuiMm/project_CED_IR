@@ -1,0 +1,49 @@
+{
+  "budget_limited": false,
+  "case_id": "CED_IR_LENGTH_WIDTH_PROBE_V01",
+  "elapsed_device_hours": 0.014397851046232972,
+  "final_update": 2048,
+  "global_ablation_drop": 0.08111572265625,
+  "mean_measured_step_seconds": 0.025550748240800763,
+  "measured_input_tokens_per_second": 641233.6674288535,
+  "parameter_count": 4213760,
+  "peak_allocated_bytes": 844275200,
+  "peak_reserved_bytes": 950009856,
+  "test": {
+    "examples": 4096,
+    "global_ablation": false,
+    "nll": 0.6972062110435218,
+    "query_correct": 2606,
+    "query_count": 32768,
+    "query_exact_match": 0.07952880859375,
+    "split": "test"
+  },
+  "test_global_ablated": {
+    "examples": 4096,
+    "global_ablation": true,
+    "nll": 3.9540683766826987,
+    "query_correct": 0,
+    "query_count": 32768,
+    "query_exact_match": 0.0,
+    "split": "test"
+  },
+  "validation": {
+    "examples": 2048,
+    "global_ablation": false,
+    "nll": 0.6983334585092962,
+    "query_correct": 1330,
+    "query_count": 16384,
+    "query_exact_match": 0.0811767578125,
+    "split": "validation"
+  },
+  "validation_global_ablated": {
+    "examples": 2048,
+    "global_ablation": true,
+    "nll": 3.944021061062813,
+    "query_correct": 1,
+    "query_count": 16384,
+    "query_exact_match": 6.103515625e-05,
+    "split": "validation"
+  },
+  "variant": "B_PACK2_WIDE2"
+}

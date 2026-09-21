@@ -1,0 +1,49 @@
+{
+  "budget_limited": false,
+  "case_id": "CED_IR_LENGTH_WIDTH_PROBE_V01",
+  "elapsed_device_hours": 0.015142884850243314,
+  "final_update": 2048,
+  "global_ablation_drop": 0.99591064453125,
+  "mean_measured_step_seconds": 0.02683903741772954,
+  "measured_input_tokens_per_second": 610454.0839149816,
+  "parameter_count": 3820544,
+  "peak_allocated_bytes": 980152320,
+  "peak_reserved_bytes": 1151336448,
+  "test": {
+    "examples": 4096,
+    "global_ablation": false,
+    "nll": 0.0037291275675670477,
+    "query_correct": 32673,
+    "query_count": 32768,
+    "query_exact_match": 0.997100830078125,
+    "split": "test"
+  },
+  "test_global_ablated": {
+    "examples": 4096,
+    "global_ablation": true,
+    "nll": 5.322812937200069,
+    "query_correct": 0,
+    "query_count": 32768,
+    "query_exact_match": 0.0,
+    "split": "test"
+  },
+  "validation": {
+    "examples": 2048,
+    "global_ablation": false,
+    "nll": 0.004021082913823193,
+    "query_correct": 16317,
+    "query_count": 16384,
+    "query_exact_match": 0.99591064453125,
+    "split": "validation"
+  },
+  "validation_global_ablated": {
+    "examples": 2048,
+    "global_ablation": true,
+    "nll": 5.316801518201828,
+    "query_correct": 0,
+    "query_count": 16384,
+    "query_exact_match": 0.0,
+    "split": "validation"
+  },
+  "variant": "A_TOKEN"
+}

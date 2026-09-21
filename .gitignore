@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.pt
+*.pth
+*.ckpt
+*.log
+*.pid
+
+# Local and remote execution receipts may contain machine-specific identifiers.
+runs/REMOTE_LAUNCH*.json
+runs/budget_ledger.jsonl
+runs/local_smoke_*/
+runs/**/environment.json
+runs/**/run_manifest.json
+scripts/run_g1_resume_2048.sh
+
+# Editor and OS files.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

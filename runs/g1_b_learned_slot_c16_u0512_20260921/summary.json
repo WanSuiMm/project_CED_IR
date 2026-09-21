@@ -1,0 +1,59 @@
+{
+  "base_update": 2048,
+  "case_id": "CED_IR_LENGTH_WIDTH_PROBE_V01",
+  "elapsed_device_hours": 0.002833669485504894,
+  "gate_dim": 16,
+  "gate_parameter_count": 49152,
+  "gate_parameter_norms": {
+    "decoder.0.global_read.gate_query.weight": 2.5771777629852295,
+    "decoder.0.global_read.gate_slot_proj": 0.44812941551208496,
+    "decoder.1.global_read.gate_query.weight": 2.7260613441467285,
+    "decoder.1.global_read.gate_slot_proj": 0.7022621631622314
+  },
+  "gate_updates": 512,
+  "global_ablation_drop": 0.08087158203125,
+  "mean_step_seconds": 0.01928870603386163,
+  "peak_allocated_bytes": 739008512,
+  "peak_reserved_bytes": 880803840,
+  "test": {
+    "examples": 4096,
+    "global_ablation": false,
+    "nll": 0.6939767268486321,
+    "query_correct": 2648,
+    "query_count": 32768,
+    "query_exact_match": 0.080810546875,
+    "split": "test"
+  },
+  "test_global_ablated": {
+    "examples": 4096,
+    "global_ablation": true,
+    "nll": 3.9540683766826987,
+    "query_correct": 0,
+    "query_count": 32768,
+    "query_exact_match": 0.0,
+    "split": "test"
+  },
+  "update_zero_equivalence": {
+    "max_abs_logit_difference": 0.0,
+    "mean_abs_logit_difference": 0.0
+  },
+  "validation": {
+    "examples": 2048,
+    "global_ablation": false,
+    "nll": 0.6951399631798267,
+    "query_correct": 1326,
+    "query_count": 16384,
+    "query_exact_match": 0.0809326171875,
+    "split": "validation"
+  },
+  "validation_global_ablated": {
+    "examples": 2048,
+    "global_ablation": true,
+    "nll": 3.944021061062813,
+    "query_correct": 1,
+    "query_count": 16384,
+    "query_exact_match": 6.103515625e-05,
+    "split": "validation"
+  },
+  "variant": "B_LEARNED_SLOT"
+}
