@@ -1,9 +1,9 @@
-# CED IR Length-Width Probe
+# CED IR Research Project
 
-This repository is a self-contained, bounded causal-language-model probe of
-whether a token-level long-range interface of shape `N x d` can be replaced by
-a packed interface of shape `N/2 x 2d` without retaining a hidden token-level
-global cache.
+This repository contains one research project on whether token-level address
+records can be replaced by smaller persistent interfaces without losing the
+computation a decoder needs. It contains the original synthetic length-width
+wind tunnel and the subsequent frozen-Qwen real-model attention-operator audit.
 
 ## Start here
 
@@ -14,13 +14,17 @@ model—read files in this order:
    changed evidence
 2. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
    file-routing instructions
-3. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts
+3. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
+   the synthetic and real-model branches
 4. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
 5. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
    experimental contract
 6. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
    [`src/ced_ir/synthetic.py`](src/ced_ir/synthetic.py): implementation
-7. [`tests/`](tests): executable correctness claims
+7. [`real_model_audit/README.md`](real_model_audit/README.md): Qwen3 R0/R1
+   oracle audit, code, and evidence
+8. [`tests/`](tests) and [`real_model_audit/tests/`](real_model_audit/tests):
+   executable correctness claims
 
 The large `test_samples*.jsonl` files are raw evidence. They should not be the
 first files used to understand the project.
@@ -37,6 +41,15 @@ whereas the packed-wide reader reached 7.95%. Its NLL was close to `ln(2)`, but
 an identity-preserving low-rank two-way slot gate trained on the frozen packed
 checkpoint did not recover performance (8.08%). Exact numbers and formal status
 fields are centralized in [`RESULTS.md`](RESULTS.md).
+
+The real-model branch audits the same underlying hypothesis directly in frozen
+Qwen3-0.6B attention. Its qualified v0.1 run found that the tested `8->4`
+oracle missed both held-out operator thresholds in all 36 sequence-layer units.
+However, the fixed old region carried only 0.568% median attention mass, below
+the preregistered causal-relevance threshold, so the formal verdict is
+`INCONCLUSIVE_LOW_MASS`. See
+[`real_model_audit/RESULTS.md`](real_model_audit/RESULTS.md). No compiler or
+continued pretraining was authorized by this result.
 
 A subsequent directly supervised oracle-block probe changes the mechanism
 interpretation: the rank-16 bilinear gate family decodes the physical source
@@ -66,6 +79,8 @@ claim boundary.
 - `scripts/probe_physical_slot.py`: directly supervised frozen-backbone slot
   decodability probe and matched record-permutation control
 - `tests/`: causality, cache, replay, gradient, shape and gate-equivalence tests
+- `real_model_audit/`: frozen-Qwen attention-operator oracle protocol,
+  implementation, tests, and qualified R0/R1 evidence
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
 

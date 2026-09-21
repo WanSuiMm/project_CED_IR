@@ -13,6 +13,7 @@ runs/local_smoke_*/
 runs/**/environment.json
 runs/**/run_manifest.json
 scripts/run_g1_resume_2048.sh
+real_model_audit/runs/**/source_cache/
 
 # Editor and OS files.
 .DS_Store

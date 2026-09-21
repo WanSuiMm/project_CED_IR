@@ -1,15 +1,17 @@
-# CED IR Length-Width Probe
+# CED IR Research Project
 
 Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, the
 zero-training addressing audit, and the supervised oracle-block slot probe are
-complete. The matched record-permutation shortcut control is also complete.
+complete. The matched record-permutation shortcut control and the frozen-Qwen
+R0/R1 attention-operator audit are also complete.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
-This project is a bounded architecture probe. It asks whether a causal
-CED-style decoder can learn to use a shared long-range interface whose shape is
-changed from `N x d` to `N/2 x 2d`, without retaining a hidden token-level
-global cache. It is not a post-training migration experiment.
+This project asks whether token-level long-range address records can be replaced
+by smaller persistent interfaces while preserving downstream computation. The
+synthetic branch tests a causal CED-style packed interface; the real-model
+branch tests oracle attention-operator compression in frozen Qwen3-0.6B. These
+are two stages of one project, not separate projects.
 
 The frozen protocol is in `protocol.md`. The repository is self-contained;
 `GPT_CONTEXT.md`, `RESULTS.md`, and `ARCHITECTURE.md` provide the concise
@@ -52,3 +54,8 @@ therefore makes the slot label decodable. However, the matched permutation
 control leaves accuracy at 100% after queries and blocks are deliberately
 mismatched across records. Formatting parity is sufficient to saturate the
 probe, which does not establish a query-specific address relation.
+
+The real-model branch is in `real_model_audit/`. Its qualified v0.1 run has
+formal verdict `INCONCLUSIVE_LOW_MASS`: `8->4` missed both held-out operator
+thresholds in all 36 units, while the selected old region carried only 0.568%
+median attention mass. Compiler training and model adaptation remain frozen.

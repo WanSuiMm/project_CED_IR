@@ -158,6 +158,37 @@ but saturated accuracy cannot be used as evidence that B learned semantic
 query-to-record addressing. The proposed oracle-routing intervention is not
 motivated by this probe because its pair-specific precondition failed.
 
+## Real-model attention-operator audit
+
+The same project next tested the address-record hypothesis in frozen
+`Qwen/Qwen3-0.6B-Base`. For each sequence and audited layer, eight adjacent
+8-token blocks in an old 64-token region were replaced by independently fitted
+latent KV records. Oracle parameters were fitted on one contiguous future-query
+span and evaluated on a later disjoint span. Qwen parameters were never updated.
+
+The corrected exact-attention implementation qualified with at most 0.303%
+relative mismatch, below the preregistered 1% limit. Held-out aggregates are:
+
+| Latent records per 8-token block | log-Z RMSE | conditional-value relative error | units meeting both 0.10 limits |
+|---:|---:|---:|---:|
+| 1 | 0.899 | 0.518 | 0 / 36 |
+| 2 | 0.775 | 0.397 | 0 / 36 |
+| 4 | 0.534 | 0.278 | 0 / 36 |
+
+The median score-matrix effective rank was only 1.339, so descriptive low rank
+did not imply preservation of block mass and conditional value output. The
+replaced region carried only 0.568% median true attention mass, below the frozen
+2% causal-relevance threshold. Consequently, small global KL and delta NLL are
+not evidence of successful compression. The formal verdict is:
+
+```text
+INCONCLUSIVE_LOW_MASS
+```
+
+This result does not authorize the amortized compiler or adaptation stages. It
+is also not a universal impossibility result. The exact claim boundary and any
+permitted follow-up are in `real_model_audit/RESULTS.md`.
+
 ## Resource observations are not a systems verdict
 
 During training on the same physical RTX 5090, measured input throughput was
@@ -176,6 +207,9 @@ speedup.
 - Addressing audit: `runs/address_audit_v01/AUDIT.md` and `audit.json`
 - Supervised slot probe: `runs/slot_probe_v01/PROBE.md` and `summary.json`
 - Matched permutation control: `runs/slot_permutation_v01/PROBE.md` and
+  `summary.json`
+- Real-model oracle audit: `real_model_audit/RESULTS.md`,
+  `real_model_audit/runs/r01_qwen3_06b_v03/RESULTS.md`, and sanitized
   `summary.json`
 - Per-example evidence: the corresponding `test_samples*.jsonl` files
 

@@ -2,17 +2,18 @@
 
 ## One-sentence question
 
-Can a small causal CED-style decoder replace a token-level long-range interface
-`N x d` with a packed interface `N/2 x 2d`, without retaining a hidden
-token-level global cache, while preserving exact long-range access?
+Can token-level long-range address records be replaced by a smaller persistent
+interface while preserving the computation needed by synthetic and real
+pretrained decoders?
 
 ## What this project is—and is not
 
-This is a synthetic architecture wind tunnel. It is not a post-training
-migration experiment, not a reproduction of a complete DeepSeek model, not a
-natural-language result, and not a systems-speedup claim. All model parameters
-in the A/B experiment were trained jointly from scratch. The gate diagnostic
-started from the completed B checkpoint and froze every original parameter.
+This is one research project with two evidence stages. The first is a synthetic
+architecture wind tunnel trained from scratch. The second is a frozen-Qwen3
+real-model attention-operator audit under `real_model_audit/`. Neither stage is
+a systems-speedup claim or a completed post-training migration. The synthetic
+gate diagnostic froze every original B parameter; the Qwen audit froze the
+entire pretrained model.
 
 ## Variants
 
@@ -66,6 +67,8 @@ resolution.
 - zero-training follow-up: `ADDRESSING_AUDIT_COMPLETE`
 - supervised oracle-block probe: `GATE_FAMILY_CLEANLY_DECODABLE`
 - address-relation status: `STRUCTURAL_SHORTCUT_DOMINANT`
+- real-model R0/R1 status: `INCONCLUSIVE_LOW_MASS`
+- real-model compiler/adaptation status: `FROZEN_NOT_AUTHORIZED`
 
 ## Code routing
 
@@ -84,6 +87,11 @@ resolution.
   `summary.json`
 - Matched permutation control: `runs/slot_permutation_v01/PROBE.md` and
   `summary.json`
+- Real-model protocol and interpretation: `real_model_audit/PROTOCOL.md` and
+  `real_model_audit/RESULTS.md`
+- Real-model implementation: `real_model_audit/scripts/run_r01_gate.py` and
+  `real_model_audit/src/aoc/oracle.py`
+- Real-model aggregate: `real_model_audit/runs/r01_qwen3_06b_v03/summary.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
 ## Recommended review behavior
@@ -120,3 +128,11 @@ ordinals also remain above 0.999 when query identity and source-record identity
 are deliberately mismatched. Formatting parity is sufficient to saturate the
 probe. `GATE_FAMILY_CLEANLY_DECODABLE` is therefore a label-decoding metric,
 not evidence that B learned semantic query-to-record addressing.
+
+The qualified Qwen3 audit supplies a separate real-model check of the same
+research hypothesis. Its exact-attention qualification error is at most 0.303%.
+For `8->4`, median held-out log-mass RMSE is 0.534 and conditional-value relative
+error is 0.278; zero of 36 sequence-layer units meets both 0.10 limits. Yet the
+fixed replaced region carries only 0.568% median attention mass, so tiny global
+KL and delta NLL are not positive compression evidence. Low `QK^T` effective
+rank (median 1.339) likewise does not imply held-out operator preservation.
