@@ -1,82 +1,90 @@
 # GPT incremental-review handoff
 
-Use this file when the repository has already been reviewed at the base commit.
-It is an incremental handoff, not a replacement for `GPT_CONTEXT.md`.
+Use this file for incremental review of the **same CED IR project**. The new
+Qwen audit is a real-model evidence stage inside this repository, not a separate
+project and not a reinterpretation of the frozen synthetic runs.
 
 ## Review range
 
-- Base commit: `0da62c5d26e964e8816fac48ebe18bcaf069765e`
-- Evidence head: `38896e4d76922d30429f544b12d84b1cc4540fbc`
-- Update: matched record-permutation shortcut control
-- Scientific status: complete
+- Base commit: `c1c4ef297fe76e36d3af19443fd38721c2e49196`
+- Evidence head: `511771f74b9b75401f72d566f4f967d57b889204`
+- Update: frozen-Qwen attention-operator R0/R1 audit
+- Scientific status: qualified run complete; formal verdict
+  `INCONCLUSIVE_LOW_MASS`
 
-The commit that adds this handoff may be newer than the evidence head. That
-metadata-only commit does not change the experiment or its conclusions.
+The later commit that updates this handoff is metadata only. Review the evidence
+range above; do not reread the unchanged synthetic training pipeline.
 
 ## Read in this order
 
-1. `runs/slot_permutation_v01/PROBE.md` -- concise control result
-2. the `Matched record-permutation shortcut control` section of `RESULTS.md`
-3. `slot_permutation_protocol.md` -- frozen transformations and thresholds
-4. `src/ced_ir/probes.py` (`permute_record_pairs`) and the permutation evaluator
-   in `scripts/probe_physical_slot.py`
-5. `runs/slot_permutation_v01/summary.json` -- every ordinal, head, layer, and
-   probe family
-
-Do not reread the earlier training pipeline or raw JSONL unless this review
-finds a concrete dependency requiring it.
+1. `real_model_audit/RESULTS.md` — concise interpretation and limitations.
+2. `real_model_audit/PROTOCOL.md` — frozen design, qualification, and decision
+   order.
+3. `real_model_audit/runs/r01_qwen3_06b_v03/RESULTS.md` — generated aggregate.
+4. `real_model_audit/scripts/run_r01_gate.py` — Qwen extraction, query split,
+   mass calculation, intervention, and aggregation.
+5. `real_model_audit/src/aoc/oracle.py` — latent-KV optimizer and metrics.
+6. `real_model_audit/runs/r01_qwen3_06b_v03/summary.json` only for per-unit
+   verification; do not open it first.
 
 ## What changed
 
-- Added fixed-point-free cyclic query, block, and pair-preserving record
-  permutations while holding phase, digit ordinal, target, and feature marginals
-  fixed.
-- Reproduced the supervised slot probe and evaluated the terminal probes under
-  all four conditions on the frozen 4,096-example test split.
-- Made layer 0, digit ordinal 0, rank-16 bilinear accuracy the primary statistic
-  because that query contains no previous answer digit.
-- Narrowed documentation that previously treated slot-label decoding as
-  evidence for a query-specific address relation.
+- Added a real-pretrained-model stage to the existing CED IR evidence chain.
+- Froze `Qwen/Qwen3-0.6B-Base` and audited layers 4, 16, and 27 on four prose,
+  four Python-code, and four structured examples.
+- Replaced eight adjacent 8-token blocks with `c in {1,2,4}` post-RoPE latent
+  KV records, fitted on 64 contiguous future queries and evaluated on a later
+  disjoint 64-query span.
+- Evaluated block log-mass, conditional value output, global attention output,
+  downstream logit KL, and delta NLL after a real single-layer intervention.
+- Corrected the exact-attention qualification path to match Qwen eager
+  attention's BF16 matmul and BF16-restored softmax weights. The corrected
+  maximum mismatch is 0.303%, below the frozen 1% limit.
+- Added a sanitized aggregate; machine-specific paths, credentials, caches,
+  logs, and launch receipts are excluded.
+
+## New decision-relevant evidence
+
+| latent records | held-out log-Z RMSE | held-out mu relative error | units meeting both 0.10 limits |
+|---:|---:|---:|---:|
+| 1 | 0.899 | 0.518 | 0 / 36 |
+| 2 | 0.775 | 0.397 | 0 / 36 |
+| 4 | 0.534 | 0.278 | 0 / 36 |
+
+- Median `QK^T` entropy effective rank: 1.339.
+- Median true attention mass of the replaced 64-token region: 0.568%.
+- Pre-registered causal-relevance minimum: 2%.
+- `8->4` median projected attention-output error: 0.983%.
+- `8->4` median logit KL: 0.000649; median delta NLL: +0.001095.
+- Formal verdict: `INCONCLUSIVE_LOW_MASS`.
+
+Small global KL and delta NLL are not positive compression evidence because the
+model rarely attended to the selected region. Conversely, failure of all 36
+units to meet the operator thresholds means low score-matrix effective rank did
+not imply held-out operator preservation for the tested oracle.
 
 ## What did not change
 
-- Terminal B, all earlier checkpoints, the original G1 result, and the zero-
-  training addressing audit remain unchanged.
-- The original metric verdict `GATE_FAMILY_CLEANLY_DECODABLE` remains true.
-- No new architecture or language-model repair was trained.
+- All original G1 checkpoints, synthetic results, addressing audit, supervised
+  slot probe, and record-permutation control remain unchanged.
+- `STRUCTURAL_SHORTCUT_DOMINANT` remains the terminal interpretation of the
+  physical-slot probe.
+- No amortized compiler, Qwen parameter update, continued pretraining, kernel,
+  or system-speed measurement was performed.
+- The result is not a universal impossibility theorem.
 
-## New evidence
+## Reviewer questions
 
-Primary layer-0 bilinear digit-0 physical-slot accuracy:
-
-| matched | query cyclic | block cyclic | paired cyclic |
-|---:|---:|---:|---:|
-| 1.0000 | 1.0000 | 1.0000 | 1.0000 |
-
-- Query and block cyclic conditions deliberately break query--record identity.
-- Every other mismatched digit ordinal also remains above 0.999.
-- Pair-preserving cyclic accuracy remains 1.0, qualifying the transformation.
-- Frozen control verdict: `STRUCTURAL_SHORTCUT_DOMINANT`.
-
-## Current interpretation
-
-The physical label is `(phase + digit ordinal) mod 2`; it is independent of
-record identity, query key, and digit value. Near-perfect probe accuracy survives
-complete query/block mismatching, including digit 0 with no answer-prefix cue.
-Formatting parity is therefore sufficient to saturate the supervised probe.
-
-This result means the probe cannot be used as evidence that B learned semantic
-query-to-record addressing. It does not prove that no pair-specific signal
-exists; saturation makes such a signal unidentifiable with this label. The
-earlier decodability verdict is retained only as a metric statement.
-
-## Questions for the reviewer
-
-1. Is `a=(phase+digit_ordinal) mod 2` the correct structural relation for every
-   record, and does the implementation preserve its target under permutation?
-2. Are the cyclic transformations truly fixed-point-free and do they isolate
-   query--record matching without changing relevant marginals?
-3. Does the evidence justify `STRUCTURAL_SHORTCUT_DOMINANT` while stopping short
-   of claiming that no pair-specific signal exists?
-4. Is any further experiment in this physical-slot probe family decision-
-   relevant, or should the mechanism branch be closed here?
+1. Does the implementation truly separate the contiguous fit and held-out
+   future-query spans without teacher-query leakage into the intervention?
+2. Does the GQA mapping jointly fit the two query heads served by each KV head,
+   and are Q/K evaluated after the same normalization and RoPE used by Qwen?
+3. Is block attention mass computed against the complete causal denominator,
+   and does the low-mass condition correctly take precedence over downstream
+   KL/NLL in the formal verdict?
+4. Does the direct `8->8` identity control qualify the operator algebra, while
+   the missing learned `8->8` recovery and fit/test metric split remain valid
+   limitations of the optimizer audit?
+5. Is the only decision-relevant follow-up a calibration-selected high-mass
+   old-region audit with an optimized `8->8` recovery control, leaving R2/R3
+   frozen unless that gate passes?
