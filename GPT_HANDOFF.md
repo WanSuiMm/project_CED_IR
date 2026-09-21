@@ -5,9 +5,9 @@ It is an incremental handoff, not a replacement for `GPT_CONTEXT.md`.
 
 ## Review range
 
-- Base commit: `930fb237c85f003228b854da62196385cd732253`
-- Evidence head: `6e2e2ecaf7c1201cfd2b5550068e5f3362edbe12`
-- Update: supervised oracle-block physical-slot probe
+- Base commit: `0da62c5d26e964e8816fac48ebe18bcaf069765e`
+- Evidence head: `38896e4d76922d30429f544b12d84b1cc4540fbc`
+- Update: matched record-permutation shortcut control
 - Scientific status: complete
 
 The commit that adds this handoff may be newer than the evidence head. That
@@ -15,67 +15,68 @@ metadata-only commit does not change the experiment or its conclusions.
 
 ## Read in this order
 
-1. `runs/slot_probe_v01/PROBE.md` -- concise new result
-2. the `Supervised oracle-block physical-slot probe` section of `RESULTS.md`
-3. `slot_probe_protocol.md` -- frozen controls and decision thresholds
-4. `scripts/probe_physical_slot.py` and `src/ced_ir/probes.py` -- implementation
-5. `runs/slot_probe_v01/summary.json` -- validation, per-head, and per-phase data
+1. `runs/slot_permutation_v01/PROBE.md` -- concise control result
+2. the `Matched record-permutation shortcut control` section of `RESULTS.md`
+3. `slot_permutation_protocol.md` -- frozen transformations and thresholds
+4. `src/ced_ir/probes.py` (`permute_record_pairs`) and the permutation evaluator
+   in `scripts/probe_physical_slot.py`
+5. `runs/slot_permutation_v01/summary.json` -- every ordinal, head, layer, and
+   probe family
 
-Do not reread the old training pipeline or raw per-example JSONL unless this
-incremental review finds a concrete dependency that requires it.
+Do not reread the earlier training pipeline or raw JSONL unless this review
+finds a concrete dependency requiring it.
 
 ## What changed
 
-- Added q-only, z-only, joint-linear, and rank-16 bilinear slot probes.
-- Froze terminal B and supplied the known correct packed block for each query
-  digit, then trained probes directly on physical-slot cross-entropy.
-- Used fresh deterministic training examples and the independent frozen
-  validation/test splits. Test was evaluated once at the terminal update.
-- Updated mechanism wording to separate address decodability from address
-  usability by the original coarse-attention/LM-loss/frozen-reader path.
+- Added fixed-point-free cyclic query, block, and pair-preserving record
+  permutations while holding phase, digit ordinal, target, and feature marginals
+  fixed.
+- Reproduced the supervised slot probe and evaluated the terminal probes under
+  all four conditions on the frozen 4,096-example test split.
+- Made layer 0, digit ordinal 0, rank-16 bilinear accuracy the primary statistic
+  because that query contains no previous answer digit.
+- Narrowed documentation that previously treated slot-label decoding as
+  evidence for a query-specific address relation.
 
 ## What did not change
 
-- B, the failed LM-trained gate, and every earlier checkpoint remain unchanged.
-- G1 task metrics, addressing-audit metrics, data semantics, and frozen test
-  examples remain unchanged.
-- This is a representation probe, not an LM repair, architecture result,
-  systems result, or multi-seed training claim.
+- Terminal B, all earlier checkpoints, the original G1 result, and the zero-
+  training addressing audit remain unchanged.
+- The original metric verdict `GATE_FAMILY_CLEANLY_DECODABLE` remains true.
+- No new architecture or language-model repair was trained.
 
 ## New evidence
 
-Four-head macro held-out physical-slot accuracy:
+Primary layer-0 bilinear digit-0 physical-slot accuracy:
 
-| layer | q-only | z-only | q+z linear | rank-16 bilinear |
-|---:|---:|---:|---:|---:|
-| 0 | 0.4990 | 0.6264 | 0.9901 | 1.0000 |
-| 1 | 0.8063 | 0.6264 | 0.9916 | 1.0000 |
+| matched | query cyclic | block cyclic | paired cyclic |
+|---:|---:|---:|---:|
+| 1.0000 | 1.0000 | 1.0000 | 1.0000 |
 
-- Validation and test agree to within 0.001.
-- Bilinear accuracy is essentially 100% in every head and phase.
-- Every probe family reaches 1.0 on the separable implementation control.
-- Formal verdict: `GATE_FAMILY_CLEANLY_DECODABLE`.
+- Query and block cyclic conditions deliberately break query--record identity.
+- Every other mismatched digit ordinal also remains above 0.999.
+- Pair-preserving cyclic accuracy remains 1.0, qualifying the transformation.
+- Frozen control verdict: `STRUCTURAL_SHORTCUT_DOMINANT`.
 
 ## Current interpretation
 
-Physical left/right identity is cleanly present in the frozen query--correct-
-block geometry. Layer 0 is the decisive control: q-only is at chance, while
-adding the oracle block makes both joint-linear and bilinear decoding nearly
-perfect. Therefore the failed LM-trained gate cannot be interpreted as evidence
-that B lacks the address relation.
+The physical label is `(phase + digit ordinal) mod 2`; it is independent of
+record identity, query key, and digit value. Near-perfect probe accuracy survives
+complete query/block mismatching, including digit 0 with no answer-prefix cue.
+Formatting parity is therefore sufficient to saturate the supervised probe.
 
-The remaining task failure lies between decodability and use: coarse block
-weight dilution, indirect LM credit assignment, and/or the frozen output reader
-can prevent a decodable relation from improving LM predictions. The result does
-not show which of those mechanisms dominates and does not itself repair B.
+This result means the probe cannot be used as evidence that B learned semantic
+query-to-record addressing. It does not prove that no pair-specific signal
+exists; saturation makes such a signal unidentifiable with this label. The
+earlier decodability verdict is retained only as a metric statement.
 
 ## Questions for the reviewer
 
-1. Are feature capture, oracle-block selection, split separation, controls, and
-   probe losses implemented correctly?
-2. Can the near-perfect bilinear result be explained by leakage not covered by
-   the layer-0 q-only and phase-stratified controls?
-3. Does the evidence justify `GATE_FAMILY_CLEANLY_DECODABLE` while preserving
-   the stated non-causal/non-repair claim boundary?
-4. What single smallest intervention would distinguish coarse dilution from
-   frozen-reader incompatibility without training a new architecture?
+1. Is `a=(phase+digit_ordinal) mod 2` the correct structural relation for every
+   record, and does the implementation preserve its target under permutation?
+2. Are the cyclic transformations truly fixed-point-free and do they isolate
+   query--record matching without changing relevant marginals?
+3. Does the evidence justify `STRUCTURAL_SHORTCUT_DOMINANT` while stopping short
+   of claiming that no pair-specific signal exists?
+4. Is any further experiment in this physical-slot probe family decision-
+   relevant, or should the mechanism branch be closed here?
