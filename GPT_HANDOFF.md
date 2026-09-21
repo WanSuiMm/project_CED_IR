@@ -1,90 +1,82 @@
 # GPT incremental-review handoff
 
-Use this file for incremental review of the **same CED IR project**. The new
-Qwen audit is a real-model evidence stage inside this repository, not a separate
-project and not a reinterpretation of the frozen synthetic runs.
+This is an incremental review packet for the **same CED IR project**. The
+final R1b frozen-Qwen audit is inside `real_model_audit/`; it is not a separate
+project. The synthetic branch and all earlier evidence remain unchanged.
 
 ## Review range
 
-- Base commit: `c1c4ef297fe76e36d3af19443fd38721c2e49196`
-- Evidence head: `511771f74b9b75401f72d566f4f967d57b889204`
-- Update: frozen-Qwen attention-operator R0/R1 audit
-- Scientific status: qualified run complete; formal verdict
-  `INCONCLUSIVE_LOW_MASS`
+- Base commit: `15d61a7413ef1fba646763e877a1b34fcb33fd86`
+- Evidence head: `b1fbab27a83502d32905e61641141a32261fbffb`
+- Update: final high-mass R1b attention-operator audit
+- Formal verdict: `ORACLE_OPTIMIZER_UNQUALIFIED`
 
-The later commit that updates this handoff is metadata only. Review the evidence
-range above; do not reread the unchanged synthetic training pipeline.
+The later commit that updates this handoff is metadata only. Review the fixed
+range above; do not reread the unchanged synthetic training pipeline or the
+preserved v0.1 Qwen evidence.
 
-## Read in this order
+## Minimal reading order
 
-1. `real_model_audit/RESULTS.md` — concise interpretation and limitations.
-2. `real_model_audit/PROTOCOL.md` — frozen design, qualification, and decision
-   order.
-3. `real_model_audit/runs/r01_qwen3_06b_v03/RESULTS.md` — generated aggregate.
-4. `real_model_audit/scripts/run_r01_gate.py` — Qwen extraction, query split,
-   mass calculation, intervention, and aggregation.
-5. `real_model_audit/src/aoc/oracle.py` — latent-KV optimizer and metrics.
-6. `real_model_audit/runs/r01_qwen3_06b_v03/summary.json` only for per-unit
+1. `real_model_audit/RESULTS.md` — terminal interpretation and claim boundary.
+2. `real_model_audit/R1B_PROTOCOL.md` — frozen design and ordered decision rule.
+3. `real_model_audit/runs/r1b_high_mass_v01/RESULTS.md` — generated aggregate.
+4. `real_model_audit/scripts/run_r1b_gate.py` — selection, fit/test split,
+   controls, intervention, and aggregation.
+5. `real_model_audit/src/aoc/oracle.py` — non-identity recovery initialization
+   and optimizer.
+6. `real_model_audit/runs/r1b_high_mass_v01/summary.json` only for per-unit
    verification; do not open it first.
 
 ## What changed
 
-- Added a real-pretrained-model stage to the existing CED IR evidence chain.
-- Froze `Qwen/Qwen3-0.6B-Base` and audited layers 4, 16, and 27 on four prose,
-  four Python-code, and four structured examples.
-- Replaced eight adjacent 8-token blocks with `c in {1,2,4}` post-RoPE latent
-  KV records, fitted on 64 contiguous future queries and evaluated on a later
-  disjoint 64-query span.
-- Evaluated block log-mass, conditional value output, global attention output,
-  downstream logit KL, and delta NLL after a real single-layer intervention.
-- Corrected the exact-attention qualification path to match Qwen eager
-  attention's BF16 matmul and BF16-restored softmax weights. The corrected
-  maximum mismatch is 0.303%, below the frozen 1% limit.
-- Added a sanitized aggregate; machine-specific paths, credentials, caches,
-  logs, and launch receipts are excluded.
+- Added three disjoint query spans: `Q_select`, `Q_fit`, and `Q_test`.
+- Selected the highest-mass eligible old 64-token region using only
+  `Q_select`; the selected region was then frozen for fit and test.
+- Added separate fit and test operator metrics.
+- Added an exact-start `8 -> 8` preservation control.
+- Added a learned non-identity `8 -> 8` recovery control initialized from
+  duplicated adjacent-pair means. Four noisy restarts break the duplicated
+  symmetry; one deterministic restart is retained.
+- Retested `8 -> 4` only; no compiler, adapter, or Qwen parameter was trained.
 
 ## New decision-relevant evidence
 
-| latent records | held-out log-Z RMSE | held-out mu relative error | units meeting both 0.10 limits |
-|---:|---:|---:|---:|
-| 1 | 0.899 | 0.518 | 0 / 36 |
-| 2 | 0.775 | 0.397 | 0 / 36 |
-| 4 | 0.534 | 0.278 | 0 / 36 |
+| Metric | Result | Frozen requirement |
+|---|---:|---:|
+| Manual-exact maximum mismatch | 0.3031% | <= 1% |
+| Exact-start `8 -> 8` fit/test error | 0 | <= 1e-4 |
+| Recovery `8 -> 8` fit log-Z / mu median | 0.0199 / 0.0429 | both <= 0.02 |
+| Recovery `8 -> 8` test log-Z / mu median | 0.5688 / 0.2062 | both <= 0.02 |
+| Recovery units meeting both 0.05 test limits | 0 / 36 | >= 27 / 36 |
+| Selected-region mass on `Q_select` | 1.0885% median | >= 2% |
+| Selected-region mass on `Q_test` | 0.3914% median | >= 2% |
+| Units retaining at least 2% test mass | 3 / 36 | >= 18 / 36 |
+| `8 -> 4` test log-Z / mu median | 0.6152 / 0.3006 | descriptive after recovery failure |
 
-- Median `QK^T` entropy effective rank: 1.339.
-- Median true attention mass of the replaced 64-token region: 0.568%.
-- Pre-registered causal-relevance minimum: 2%.
-- `8->4` median projected attention-output error: 0.983%.
-- `8->4` median logit KL: 0.000649; median delta NLL: +0.001095.
-- Formal verdict: `INCONCLUSIVE_LOW_MASS`.
-
-Small global KL and delta NLL are not positive compression evidence because the
-model rarely attended to the selected region. Conversely, failure of all 36
-units to meet the operator thresholds means low score-matrix effective rank did
-not imply held-out operator preservation for the tested oracle.
+The exact algebra and intervention implementation qualify. The learned oracle
+does not recover a known-to-exist eight-record solution on held-out queries,
+so it is not qualified to support an `8 -> 4` capacity conclusion. The
+calibration-selected region also fails to remain high-mass, but optimizer
+qualification precedes mass in the frozen decision order.
 
 ## What did not change
 
-- All original G1 checkpoints, synthetic results, addressing audit, supervised
-  slot probe, and record-permutation control remain unchanged.
-- `STRUCTURAL_SHORTCUT_DOMINANT` remains the terminal interpretation of the
-  physical-slot probe.
-- No amortized compiler, Qwen parameter update, continued pretraining, kernel,
-  or system-speed measurement was performed.
-- The result is not a universal impossibility theorem.
+- All synthetic checkpoints, G1 results, addressing audit, supervised slot
+  probe, and matched record-permutation control are unchanged.
+- The v0.1 Qwen run remains preserved with verdict `INCONCLUSIVE_LOW_MASS`.
+- No amortized compiler, Qwen adaptation, continued pretraining, kernel, or
+  system-speed measurement was performed.
+- The result is not a universal impossibility theorem for learned interfaces.
 
 ## Reviewer questions
 
-1. Does the implementation truly separate the contiguous fit and held-out
-   future-query spans without teacher-query leakage into the intervention?
-2. Does the GQA mapping jointly fit the two query heads served by each KV head,
-   and are Q/K evaluated after the same normalization and RoPE used by Qwen?
-3. Is block attention mass computed against the complete causal denominator,
-   and does the low-mass condition correctly take precedence over downstream
-   KL/NLL in the formal verdict?
-4. Does the direct `8->8` identity control qualify the operator algebra, while
-   the missing learned `8->8` recovery and fit/test metric split remain valid
-   limitations of the optimizer audit?
-5. Is the only decision-relevant follow-up a calibration-selected high-mass
-   old-region audit with an optimized `8->8` recovery control, leaving R2/R3
-   frozen unless that gate passes?
+1. Is candidate selection isolated to `Q_select`, with no `Q_fit` or `Q_test`
+   leakage into region choice?
+2. Is the pair-mean `8 -> 8` initialization genuinely non-identity, and do the
+   noisy restarts adequately break its duplicated-record symmetry?
+3. Are fit/test log-Z and conditional-value errors weighted and aggregated at
+   the preregistered sequence-layer independent-unit level?
+4. Does `ORACLE_OPTIMIZER_UNQUALIFIED` correctly precede both mass diagnoses
+   and the `8 -> 4` capacity decision?
+5. Is the terminal claim properly scoped to stopping this local `8 -> c`
+   formulation rather than asserting a universal impossibility result?
