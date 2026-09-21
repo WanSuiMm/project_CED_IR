@@ -1,0 +1,719 @@
+{
+  "backbone_frozen": true,
+  "base_checkpoint_update": 2048,
+  "case_id": "CED_IR_LENGTH_WIDTH_PROBE_V01",
+  "config_sha256": "0b0491b59cd458b5d75be8048db92e6d9ffbb6a54147a307d91c0e2063fb1283",
+  "notes": [
+    "layer 1 q-only control is high (0.8063)"
+  ],
+  "probe": "SUPERVISED_ORACLE_BLOCK_PHYSICAL_SLOT_V01",
+  "protocol": "slot_probe_protocol.md",
+  "synthetic_control": {
+    "bilinear": 1.0,
+    "q_only": 1.0,
+    "qz_linear": 1.0,
+    "z_only": 1.0
+  },
+  "test": {
+    "examples": 4096,
+    "layers": [
+      {
+        "layer": 0,
+        "methods": {
+          "bilinear": {
+            "head_accuracy": [
+              0.9999847412109375,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "head_macro_accuracy": 0.9999961853027344,
+            "head_macro_nll": 0.0011637451157184842,
+            "head_nll": [
+              0.0012134832049923716,
+              0.0010606373375594558,
+              0.0012897992608031927,
+              0.0010910606595189165
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 1.0,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.9999923256385069,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 1.0,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.9999925807217473,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          },
+          "q_only": {
+            "head_accuracy": [
+              0.498992919921875,
+              0.49871826171875,
+              0.49889373779296875,
+              0.49932861328125
+            ],
+            "head_macro_accuracy": 0.49898338317871094,
+            "head_macro_nll": 0.6962634570663795,
+            "head_nll": [
+              0.6962793145794421,
+              0.6962644369341433,
+              0.6963373969774693,
+              0.6961726797744632
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.5644803056660039,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.43623373035363455,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.5638723626104023,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.43428003323836656,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          },
+          "qz_linear": {
+            "head_accuracy": [
+              0.9873733520507812,
+              0.9876632690429688,
+              0.9899063110351562,
+              0.9955902099609375
+            ],
+            "head_macro_accuracy": 0.9901332855224609,
+            "head_macro_nll": 0.1999715075653512,
+            "head_nll": [
+              0.21324883488705382,
+              0.22054142999695614,
+              0.19672206440009177,
+              0.1693737009773031
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.996932467693837,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.9835154715127702,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.9967032630029441,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.9836775878442545,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          },
+          "z_only": {
+            "head_accuracy": [
+              0.62640380859375,
+              0.62640380859375,
+              0.62640380859375,
+              0.62640380859375
+            ],
+            "head_macro_accuracy": 0.62640380859375,
+            "head_macro_nll": 0.5359603210526984,
+            "head_nll": [
+              0.538711499189958,
+              0.5362191782332957,
+              0.537345390766859,
+              0.531565216020681
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.5,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.5,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          }
+        }
+      },
+      {
+        "layer": 1,
+        "methods": {
+          "bilinear": {
+            "head_accuracy": [
+              0.9999465942382812,
+              0.9999771118164062,
+              0.9999542236328125,
+              0.999969482421875
+            ],
+            "head_macro_accuracy": 0.9999618530273438,
+            "head_macro_nll": 0.0021222182280098423,
+            "head_nll": [
+              0.00219441499802997,
+              0.0021580957040896465,
+              0.002261872726649017,
+              0.001874489483270736
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.9999534045725647,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.9999693025540275,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.99994633218842,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.9999777421652422,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          },
+          "q_only": {
+            "head_accuracy": [
+              0.8118972778320312,
+              0.8043060302734375,
+              0.8023147583007812,
+              0.8068771362304688
+            ],
+            "head_macro_accuracy": 0.8063488006591797,
+            "head_macro_nll": 0.540116172778653,
+            "head_nll": [
+              0.5358165825018659,
+              0.5409742270130664,
+              0.5456311134621501,
+              0.5380427681375295
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.8898173459244533,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.7215357932220039,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.8923960377821394,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.7253308998100665,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          },
+          "qz_linear": {
+            "head_accuracy": [
+              0.9888839721679688,
+              0.9919204711914062,
+              0.9909896850585938,
+              0.994659423828125
+            ],
+            "head_macro_accuracy": 0.9916133880615234,
+            "head_macro_nll": 0.17734315620327834,
+            "head_nll": [
+              0.1954014059738256,
+              0.17807391978567466,
+              0.17564583581406623,
+              0.16025146323954687
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.9932902584493042,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.9895475196463654,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.993674865063788,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.9900136514719848,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          },
+          "z_only": {
+            "head_accuracy": [
+              0.62640380859375,
+              0.62640380859375,
+              0.62640380859375,
+              0.62640380859375
+            ],
+            "head_macro_accuracy": 0.62640380859375,
+            "head_macro_nll": 0.535018747090362,
+            "head_nll": [
+              0.5366584789007902,
+              0.5373079422861338,
+              0.5356617055367678,
+              0.5304468616377562
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.5,
+                "observations": 128768,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 130304,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.5,
+                "observations": 130432,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 134784,
+                "phase": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "split": "test"
+  },
+  "train": {
+    "batch_size": 16,
+    "events": [
+      {
+        "grad_norm": 0.15109999477863312,
+        "layer0_bilinear": 0.012486289255321026,
+        "layer0_q_only": 0.6936182975769043,
+        "layer0_qz_linear": 0.4806414246559143,
+        "layer0_z_only": 0.6403762102127075,
+        "layer1_bilinear": 0.04273568093776703,
+        "layer1_q_only": 0.6447423100471497,
+        "layer1_qz_linear": 0.4447525143623352,
+        "layer1_z_only": 0.6377055644989014,
+        "mean_loss": 0.44963228702545166,
+        "update": 64
+      },
+      {
+        "grad_norm": 0.14216789603233337,
+        "layer0_bilinear": 0.0037924416828900576,
+        "layer0_q_only": 0.7014505863189697,
+        "layer0_qz_linear": 0.32230067253112793,
+        "layer0_z_only": 0.4778948724269867,
+        "layer1_bilinear": 0.004348986316472292,
+        "layer1_q_only": 0.6147516965866089,
+        "layer1_qz_linear": 0.29123562574386597,
+        "layer1_z_only": 0.47433578968048096,
+        "mean_loss": 0.36126381158828735,
+        "update": 128
+      },
+      {
+        "grad_norm": 0.04521692544221878,
+        "layer0_bilinear": 0.0019684056751430035,
+        "layer0_q_only": 0.6931465268135071,
+        "layer0_qz_linear": 0.2519244849681854,
+        "layer0_z_only": 0.5222678780555725,
+        "layer1_bilinear": 0.0034589157439768314,
+        "layer1_q_only": 0.571507453918457,
+        "layer1_qz_linear": 0.22518952190876007,
+        "layer1_z_only": 0.5206423401832581,
+        "mean_loss": 0.34876319766044617,
+        "update": 192
+      },
+      {
+        "grad_norm": 0.06543751806020737,
+        "layer0_bilinear": 0.0011861289385706186,
+        "layer0_q_only": 0.6979831457138062,
+        "layer0_qz_linear": 0.1964273750782013,
+        "layer0_z_only": 0.5174758434295654,
+        "layer1_bilinear": 0.002005509100854397,
+        "layer1_q_only": 0.5626693367958069,
+        "layer1_qz_linear": 0.18280762434005737,
+        "layer1_z_only": 0.5162742137908936,
+        "mean_loss": 0.3346036672592163,
+        "update": 256
+      }
+    ],
+    "example_offset": 100000,
+    "gate_dim": 16,
+    "learning_rate": 0.001,
+    "updates": 256
+  },
+  "validation": {
+    "examples": 2048,
+    "layers": [
+      {
+        "layer": 0,
+        "methods": {
+          "bilinear": {
+            "head_accuracy": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "head_macro_accuracy": 1.0,
+            "head_macro_nll": 0.0011555420004469852,
+            "head_nll": [
+              0.0011905565870620194,
+              0.0010657580946826783,
+              0.0012855867494181439,
+              0.0010802665706250991
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 1.0,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 1.0,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 1.0,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 1.0,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          },
+          "q_only": {
+            "head_accuracy": [
+              0.4994049072265625,
+              0.4994659423828125,
+              0.4997100830078125,
+              0.500152587890625
+            ],
+            "head_macro_accuracy": 0.4996833801269531,
+            "head_macro_nll": 0.6961020815651864,
+            "head_nll": [
+              0.6959805693477392,
+              0.6961369016207755,
+              0.696218044962734,
+              0.6960728103294969
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.5632795912951167,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.43577209357277885,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.562728102189781,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.438296875,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          },
+          "qz_linear": {
+            "head_accuracy": [
+              0.987274169921875,
+              0.9882354736328125,
+              0.9894256591796875,
+              0.9955902099609375
+            ],
+            "head_macro_accuracy": 0.9901313781738281,
+            "head_macro_nll": 0.20057963152066804,
+            "head_nll": [
+              0.21397872071247548,
+              0.22001628018915653,
+              0.19733032351359725,
+              0.17099320166744292
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.9970309182590233,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.9836513468809074,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.9969063640510949,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.9830625,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          },
+          "z_only": {
+            "head_accuracy": [
+              0.6256103515625,
+              0.6256103515625,
+              0.6256103515625,
+              0.6256103515625
+            ],
+            "head_macro_accuracy": 0.6256103515625,
+            "head_macro_nll": 0.5369613076327369,
+            "head_nll": [
+              0.5396690729539841,
+              0.5371184127870947,
+              0.5384087623097003,
+              0.5326489824801683
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.5,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.5,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          }
+        }
+      },
+      {
+        "layer": 1,
+        "methods": {
+          "bilinear": {
+            "head_accuracy": [
+              0.9999542236328125,
+              0.9999847412109375,
+              0.9999847412109375,
+              0.999969482421875
+            ],
+            "head_macro_accuracy": 0.9999732971191406,
+            "head_macro_nll": 0.0021357715993417514,
+            "head_nll": [
+              0.0021931008577666944,
+              0.0021830320829394623,
+              0.0022536180749739287,
+              0.0019133353816869203
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 1.0,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 1.0,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.9999429744525548,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.999953125,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          },
+          "q_only": {
+            "head_accuracy": [
+              0.811126708984375,
+              0.80322265625,
+              0.801666259765625,
+              0.8056488037109375
+            ],
+            "head_macro_accuracy": 0.8054161071777344,
+            "head_macro_nll": 0.5401959926821291,
+            "head_nll": [
+              0.53583645215258,
+              0.5411392278037965,
+              0.545918645337224,
+              0.537889645434916
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.891786093418259,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.7133447542533081,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.889940693430657,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.728828125,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          },
+          "qz_linear": {
+            "head_accuracy": [
+              0.988677978515625,
+              0.9923858642578125,
+              0.9909210205078125,
+              0.994476318359375
+            ],
+            "head_macro_accuracy": 0.9916152954101562,
+            "head_macro_nll": 0.1776585418265313,
+            "head_nll": [
+              0.19578992144670337,
+              0.17770086450036615,
+              0.1759395741391927,
+              0.16120380721986294
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.9932490711252654,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.990046077504726,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.993413549270073,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.989765625,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          },
+          "z_only": {
+            "head_accuracy": [
+              0.6256103515625,
+              0.6256103515625,
+              0.6256103515625,
+              0.6256103515625
+            ],
+            "head_macro_accuracy": 0.6256103515625,
+            "head_macro_nll": 0.5360378460609354,
+            "head_nll": [
+              0.5376913859508932,
+              0.5381976901553571,
+              0.5367113081738353,
+              0.5315509999636561
+            ],
+            "phase_accuracy": [
+              {
+                "accuracy": 0.5,
+                "observations": 60288,
+                "phase": 0
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 67712,
+                "phase": 1
+              },
+              {
+                "accuracy": 0.5,
+                "observations": 70144,
+                "phase": 2
+              },
+              {
+                "accuracy": 0.75,
+                "observations": 64000,
+                "phase": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "split": "validation"
+  },
+  "verdict": "GATE_FAMILY_CLEANLY_DECODABLE"
+}

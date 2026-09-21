@@ -56,9 +56,10 @@ This pattern is consistent with unresolved ambiguity, but the gate failure
 means the stronger story—"the correct block is found and exactly one readable
 slot bit is missing"—has not been established.
 
-Remaining explanations include inadequate coarse-block localization, source
-slot identity not being linearly exposed by the completed B representation, or
-the need for joint representation/reader adaptation.
+Remaining explanations at this stage included inadequate coarse-block
+localization, source-slot identity not being exposed to the LM objective, or
+the need for joint representation/reader adaptation. The supervised probe below
+separates direct decodability from those task-level explanations.
 
 ## Zero-training addressing audit
 
@@ -85,12 +86,42 @@ Phase-stratified four-digit exact match stays in a narrow range: B is
 digits have modestly better NLL, but the physical packing phase does not create
 the large exact-match split predicted by a pure left/right ambiguity story.
 
-These measurements reject the explanation that B merely lacks one clean,
-linearly recoverable source-slot bit. They do not show that coarse localization
-is absent everywhere: decoder layer 0 often identifies the relevant region,
-whereas decoder layer 1 is highly diffuse. The remaining realization gap spans
-the address function, the contextual payload representation, and compatibility
-with the frozen output reader.
+These measurements reject the explanation that one clean slot switch is already
+usable by the tested LM-trained post-coarse gate and frozen reader. They do not
+establish that physical slot is undecodable under direct supervision. Coarse
+localization is not absent everywhere: decoder layer 0 often identifies the
+relevant region, whereas decoder layer 1 is highly diffuse in physical source
+coordinates.
+
+## Supervised oracle-block physical-slot probe
+
+The terminal B backbone was frozen and the known correct packed block was
+supplied for every supervised query digit. Four probe families were trained on
+fresh deterministic train examples and evaluated once on the independent test
+split. The protocol and thresholds were frozen in `slot_probe_protocol.md`.
+
+| Layer | q-only | z-only | q+z linear | Rank-16 bilinear |
+|---:|---:|---:|---:|---:|
+| 0 | 0.4990 | 0.6264 | 0.9901 | 1.0000 |
+| 1 | 0.8063 | 0.6264 | 0.9916 | 1.0000 |
+
+All numbers are four-head macro physical-slot accuracy over 4,096 held-out test
+examples. Validation and test agree to within 0.001. Every probe family reached
+1.0 on the separable implementation control. The pre-registered verdict is:
+
+```text
+GATE_FAMILY_CLEANLY_DECODABLE
+```
+
+Layer 0 is the decisive leakage control: q-only is at chance, while adding the
+known correct block raises joint-linear accuracy to 99.0% and the exact
+gate-family bilinear probe to essentially 100% in every phase and head. Thus
+physical left/right identity is cleanly present in the frozen query--block
+geometry. The earlier gate failure cannot be interpreted as missing address
+information; it instead implicates coarse-weight dilution, indirect LM credit
+assignment, and/or incompatibility with the frozen output reader. This probe is
+not an LM repair and does not show that the decoded relation can be consumed by
+the existing reader.
 
 ## Resource observations are not a systems verdict
 
@@ -108,6 +139,7 @@ speedup.
 - Gate aggregates: `runs/g1_b_learned_slot_c16_u0512_20260921/summary.json`
 - Gate verdict: `runs/g1_b_learned_slot_c16_u0512_20260921/VERDICT.md`
 - Addressing audit: `runs/address_audit_v01/AUDIT.md` and `audit.json`
+- Supervised slot probe: `runs/slot_probe_v01/PROBE.md` and `summary.json`
 - Per-example evidence: the corresponding `test_samples*.jsonl` files
 
 The paired test examples describe sampling uncertainty only. This project used

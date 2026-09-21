@@ -38,6 +38,12 @@ an identity-preserving low-rank two-way slot gate trained on the frozen packed
 checkpoint did not recover performance (8.08%). Exact numbers and formal status
 fields are centralized in [`RESULTS.md`](RESULTS.md).
 
+A subsequent directly supervised oracle-block probe changes the mechanism
+interpretation: the rank-16 bilinear gate family decodes the physical source
+slot at essentially 100% held-out accuracy when given the correct block. Thus
+the slot relation exists in frozen B, but the original coarse-attention/LM-loss/
+frozen-reader path does not learn to use it.
+
 This result does not establish that all packed representations fail. It rejects
 the tested one-key-per-block reader and the tested frozen-backbone low-rank slot
 gate. See `runs/g1_b_learned_slot_c16_u0512_20260921/VERDICT.md` for the formal
@@ -55,6 +61,8 @@ claim boundary.
 - `scripts/`: G1 and slot-gate training entry points
 - `scripts/audit_addressing.py`: zero-training routing, slot, compiler, and
   phase audit
+- `scripts/probe_physical_slot.py`: directly supervised frozen-backbone slot
+  decodability probe
 - `tests/`: causality, cache, replay, gradient, shape and gate-equivalence tests
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
@@ -74,3 +82,5 @@ conditions and stopping rules.
 The completed addressing audit is summarized in
 [`runs/address_audit_v01/AUDIT.md`](runs/address_audit_v01/AUDIT.md). Its full
 per-layer and per-head measurements are in `audit.json` in the same directory.
+The supervised follow-up is in
+[`runs/slot_probe_v01/PROBE.md`](runs/slot_probe_v01/PROBE.md).

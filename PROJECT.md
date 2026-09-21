@@ -1,7 +1,8 @@
 # CED IR Length-Width Probe
 
-Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, and the
-zero-training addressing audit are complete.
+Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, the
+zero-training addressing audit, and the supervised oracle-block slot probe are
+complete.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
@@ -43,3 +44,9 @@ largely preserves the two input halves, but the gate remains near 50/50 on the
 known physical slot. Coarse localization is moderately concentrated in decoder
 layer 0 and diffuse in layer 1, so the failure is not explained by one uniform
 "missing slot bit" mechanism.
+
+The directly supervised follow-up is in `runs/slot_probe_v01/PROBE.md`. With
+the correct packed block supplied, the same rank-16 bilinear family decodes the
+physical slot at essentially 100% held-out accuracy. The frozen representation
+therefore contains the slot relation; the earlier LM-trained gate failed to
+turn that relation into task recovery.

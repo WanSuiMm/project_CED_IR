@@ -64,6 +64,7 @@ resolution.
 - `systems_status = NOT_MEASURED`
 - gate diagnostic: `FROZEN_B_LOW_RANK_SLOT_GATE_FAIL`
 - zero-training follow-up: `ADDRESSING_AUDIT_COMPLETE`
+- supervised oracle-block probe: `GATE_FAMILY_CLEANLY_DECODABLE`
 
 ## Code routing
 
@@ -78,6 +79,8 @@ resolution.
 - Executable invariants: `tests/test_model.py` and `tests/test_data.py`
 - Aggregate evidence: `RESULTS.md` and each run's `summary.json`
 - Mechanistic evidence: `runs/address_audit_v01/AUDIT.md` and `audit.json`
+- Supervised decodability evidence: `runs/slot_probe_v01/PROBE.md` and
+  `summary.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
 ## Recommended review behavior
@@ -95,5 +98,14 @@ its top four about 67.4% of the time, while layer 1 does so only about 4.0% of
 the time. On the known correct block, the learned gate assigns the physical
 slot mean probability 0.503 and has 51.9% pooled accuracy. Phase-conditioned
 exact match remains approximately 8% in every phase. Therefore the evidence
-does not support a clean recoverable left/right address bit; addressing quality
-also differs sharply by decoder layer.
+does not support the claim that a clean left/right switch was already usable by
+the LM-trained gate and frozen reader; addressing quality also differs sharply
+by decoder layer.
+
+Direct supervision separates decodability from usability.
+On the independent test split, the rank-16 bilinear family reaches essentially
+100% physical-slot accuracy in both layers. In layer 0, q-only remains at 49.9%,
+while q+z linear reaches 99.0%, so the result is not explained by a query-only
+packing rule. Physical slot is cleanly decodable from the frozen query--correct-
+block relation. The failed LM-trained gate therefore diagnoses credit/routing/
+reader incompatibility, not absence of the address relation in B.
