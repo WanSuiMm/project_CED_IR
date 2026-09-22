@@ -1,0 +1,28 @@
+{
+  "model": "Qwen/Qwen3-0.6B-Base",
+  "sequence_length": 4096,
+  "encoder_layers": 14,
+  "encoder_window": 64,
+  "local_query_chunk": 256,
+  "initial_cross_scale": 0.01,
+  "train_target_tokens": 20000000,
+  "domain_mix": {
+    "text": 0.75,
+    "code": 0.25
+  },
+  "optimizer": {
+    "learning_rate": 2e-5,
+    "weight_decay": 0.1,
+    "warmup_fraction": 0.03,
+    "gradient_clip": 1.0,
+    "microbatch_size": 1,
+    "gradient_accumulation": 8
+  },
+  "seed": 20260922,
+  "g0": {
+    "fp32_cached_max_abs": 0.001,
+    "fp32_cached_mean_abs": 0.0001,
+    "bf16_cached_mean_kl": 0.001,
+    "bf16_cached_top1_agreement": 0.99
+  }
+}

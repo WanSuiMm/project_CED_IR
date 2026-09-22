@@ -3,15 +3,18 @@
 Status: G1 A/B, the frozen-backbone low-rank slot-gate diagnostic, the
 zero-training addressing audit, and the supervised oracle-block slot probe are
 complete. The matched record-permutation shortcut control and the frozen-Qwen
-R0/R1 plus final R1b attention-operator audits are also complete.
+R0/R1 plus final R1b attention-operator audits are also complete. A subsequent
+Qwen-to-CED migration attempt stopped at G0 with `INVALID_CED_IMPLEMENTATION`;
+no 20M-token migration training was run.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
 This project asks whether token-level long-range address records can be replaced
 by smaller persistent interfaces while preserving downstream computation. The
 synthetic branch tests a causal CED-style packed interface; the real-model
-branch tests oracle attention-operator compression in frozen Qwen3-0.6B. These
-are two stages of one project, not separate projects.
+branch tests oracle attention-operator compression in frozen Qwen3-0.6B; the
+latest branch tests a direct Qwen-to-CED warm start. These are three stages of
+one project, not separate projects.
 
 The frozen protocol is in `protocol.md`. The repository is self-contained;
 `GPT_CONTEXT.md`, `RESULTS.md`, and `ARCHITECTURE.md` provide the concise
@@ -60,3 +63,9 @@ exact implementation controls but received `ORACLE_OPTIMIZER_UNQUALIFIED`:
 non-identity `8->8` recovery failed on independent test queries, while even the
 calibration-selected region retained only 0.391% median test attention mass.
 This branch is stopped; compiler training and model adaptation remain frozen.
+
+The later architecture-migration stage is in `migration/`. Its causal and
+cache-accounting controls pass and its FP32 structural smoke is consistent, but
+the formal BF16 prefill-plus-continuation parity KL is `0.02442`, above the
+frozen `0.001` limit. The migration stage is archived at G0; G1 and the
+shorter/wider comparison remain unrun.

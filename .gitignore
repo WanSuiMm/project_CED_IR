@@ -14,6 +14,10 @@ runs/**/environment.json
 runs/**/run_manifest.json
 scripts/run_g1_resume_2048.sh
 real_model_audit/runs/**/source_cache/
+migration/data/
+migration/runs/**/transient*
+migration/runs/**/checkpoint*
+migration/runs/**/*.log
 
 # Editor and OS files.
 .DS_Store

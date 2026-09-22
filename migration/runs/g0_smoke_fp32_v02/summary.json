@@ -1,0 +1,57 @@
+{
+  "protocol": "QWEN_CED_MIGRATION_G0_v0.1",
+  "verdict": "PASS_G0_CED_IMPLEMENTATION",
+  "model": "Qwen/Qwen3-0.6B-Base",
+  "arguments": {
+    "model": "Qwen/Qwen3-0.6B-Base",
+    "cache_dir": "<external-model-cache>",
+    "output": "runs/g0_smoke_fp32_v02",
+    "device": "cuda",
+    "encoder_layers": 14,
+    "window": 64,
+    "chunk": 256,
+    "parity_length": 12,
+    "remote_length": 885,
+    "train_length": 16,
+    "seed": 20260922,
+    "dtype": "float32",
+    "smoke": true
+  },
+  "metrics": {
+    "future_edit_max": 0.0,
+    "cached_max_abs": 9.441375732421875e-05,
+    "cached_mean_abs": 9.751610377861653e-06,
+    "cached_relative": 3.155847707603243e-06,
+    "cached_mean_kl": -8.312714783187403e-08,
+    "cached_top1_agreement": 1.0,
+    "remote_path": {
+      "enabled_remote_edit_rel": 0.7099080681800842,
+      "disabled_remote_edit_max": 0.0,
+      "global_ablation_rel": 0.981495201587677
+    },
+    "cache_accounting": {
+      "local_kv_elements": 344064,
+      "global_kv_elements": 24576,
+      "retained_encoder_state_elements": 0,
+      "full_history_layer_kv_copies": 0,
+      "sequence_length": 12,
+      "expected_local_kv_max": 344064,
+      "expected_global_kv": 24576
+    },
+    "train_loss": 10.773478507995605,
+    "grad_finite": true,
+    "grad_norm": 562.7288818359375,
+    "parameter_moved": true,
+    "reload_max_abs": 0.0,
+    "checkpoint_sha256_before_delete": "9b4657b2935c6fa814204b5f410172aa894be59738240f197d0035e608697bc4",
+    "parameter_count": 568786304,
+    "trainable_parameter_count": 568786304
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "duration_seconds": 8.831580400466919
+}

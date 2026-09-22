@@ -8,12 +8,11 @@ pretrained decoders?
 
 ## What this project is—and is not
 
-This is one research project with two evidence stages. The first is a synthetic
-architecture wind tunnel trained from scratch. The second is a frozen-Qwen3
-real-model attention-operator audit under `real_model_audit/`. Neither stage is
-a systems-speedup claim or a completed post-training migration. The synthetic
-gate diagnostic froze every original B parameter; the Qwen audit froze the
-entire pretrained model.
+This is one research project with three evidence stages: a synthetic
+architecture wind tunnel, a frozen-Qwen3 attention-operator audit under
+`real_model_audit/`, and a stopped Qwen-to-CED implementation qualification
+under `migration/`. None is a systems-speedup claim or a completed
+post-training migration. The latest stage failed G0 before formal training.
 
 ## Variants
 
@@ -70,6 +69,8 @@ resolution.
 - real-model R0/R1 v0.1 status: `INCONCLUSIVE_LOW_MASS`
 - real-model final R1b status: `ORACLE_OPTIMIZER_UNQUALIFIED`
 - real-model compiler/adaptation status: `FROZEN_NOT_AUTHORIZED`
+- Qwen-to-CED G0 status: `INVALID_CED_IMPLEMENTATION`
+- Qwen-to-CED G1 training status: `NOT_RUN`
 
 ## Code routing
 
@@ -95,6 +96,11 @@ resolution.
 - Final aggregate: `real_model_audit/runs/r1b_high_mass_v01/summary.json`
 - Preserved v0.1 protocol/run: `real_model_audit/PROTOCOL.md` and
   `real_model_audit/runs/r01_qwen3_06b_v03/summary.json`
+- Migration stop decision: `migration/RESULTS.md`
+- Migration implementation and runner: `migration/src/ced_migration/modeling.py`
+  and `migration/scripts/qualify_g0.py`
+- Migration formal G0 evidence:
+  `migration/runs/g0_qwen06b_bf16_gated_v01/summary.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
 ## Recommended review behavior

@@ -1,5 +1,15 @@
 # Canonical results
 
+## Latest stage: Qwen-to-CED migration G0
+
+The post-training architecture-migration attempt is archived under
+`migration/`. FP32 structural cache parity passed, but the formal BF16
+prefill-plus-one-continuation endpoint produced mean KL `0.02442`, above the
+frozen `0.001` limit. Its verdict is `INVALID_CED_IMPLEMENTATION`. No 20M-token
+C/A training or shorter/wider comparison was run. This is an implementation
+qualification failure, not an impossibility result for CED migration; see
+`migration/RESULTS.md` for the exact claim boundary.
+
 All primary numbers below come from the frozen 4,096-example test split at the
 pre-registered terminal checkpoint. Exact match is computed per four-digit
 query. Each example contains eight queries.

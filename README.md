@@ -12,18 +12,20 @@ model—read files in this order:
 
 1. [`GPT_HANDOFF.md`](GPT_HANDOFF.md): latest incremental review range and
    changed evidence
-2. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
+2. [`migration/RESULTS.md`](migration/RESULTS.md): latest Qwen-to-CED migration
+   qualification and stop decision
+3. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
    file-routing instructions
-3. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
-   the synthetic and real-model branches
-4. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
-5. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
+4. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
+   all three evidence stages
+5. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
+6. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
    experimental contract
-6. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
+7. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
    [`src/ced_ir/synthetic.py`](src/ced_ir/synthetic.py): implementation
-7. [`real_model_audit/README.md`](real_model_audit/README.md): Qwen3 R0/R1
+8. [`real_model_audit/README.md`](real_model_audit/README.md): Qwen3 R0/R1
    oracle audit, code, and evidence
-8. [`tests/`](tests) and [`real_model_audit/tests/`](real_model_audit/tests):
+9. [`tests/`](tests) and [`real_model_audit/tests/`](real_model_audit/tests):
    executable correctness claims
 
 The large `test_samples*.jsonl` files are raw evidence. They should not be the
@@ -49,6 +51,12 @@ control. Exact reconstruction qualified, but learned `8->8` recovery failed on
 held-out queries, and median test attention mass was only 0.391%. The formal
 verdict is `ORACLE_OPTIMIZER_UNQUALIFIED`; the local operator-compression branch
 is stopped. See [`real_model_audit/RESULTS.md`](real_model_audit/RESULTS.md).
+
+The latest stage attempted a true Qwen3-0.6B-to-CED warm start. Its FP32
+structural smoke passed, but the deployed BF16 prefill-plus-cache route failed
+the frozen parity gate (`0.02442` mean KL versus `0.001`). Therefore G1
+continued pretraining and the shorter/wider comparison were not run. See
+[`migration/RESULTS.md`](migration/RESULTS.md).
 
 A subsequent directly supervised oracle-block probe changes the mechanism
 interpretation: the rank-16 bilinear gate family decodes the physical source
@@ -80,6 +88,8 @@ claim boundary.
 - `tests/`: causality, cache, replay, gradient, shape and gate-equivalence tests
 - `real_model_audit/`: frozen-Qwen attention-operator oracle protocols,
   implementation, tests, preserved v0.1 evidence, and terminal R1b audit
+- `migration/`: Qwen-to-CED G0 implementation, negative qualification evidence,
+  and stopped G1 plan
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
 
