@@ -1,81 +1,45 @@
 # GPT incremental-review handoff
 
-This is an incremental review packet for the **same CED IR project**. It adds
-the function-preserving homotopy follow-up under `migration_v02/`. All synthetic
-and frozen-attention-oracle evidence is unchanged.
+Review only the new direct real-language A/B experiment in the same
+`project_CED_IR` repository. Older synthetic, oracle, and migration branches are
+unchanged and are not required reading.
 
-## Review range
+## Fixed review range
 
-- Base commit: `83c78e9173d8f325a406a6dca418e8e8895b960a`
-- Evidence head: `6738b1cd99f531725c1697c603e6802742aef2d4`
-- Update: Qwen-to-CED homotopy implementation and three qualification gates
-- Terminal verdict: `BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED`
-
-The later commit updating this handoff is metadata only. Review the fixed range
-above; do not reread old synthetic runs or `real_model_audit/`.
+- Base: `dceeaa6059ed894196837c03270b2d52c2b145b7`
+- Evidence head: `19d0a640b091e79d5e72bfb3982becec6d5e4b92`
+- Later handoff commit: metadata only
 
 ## Minimal reading order
 
-1. `migration_v02/RESULTS.md` — terminal decision and exact claim boundary.
-2. `migration_v02/PROTOCOL.md` — two-knob morphism and frozen gate order.
-3. `migration_v02/src/ced_homotopy/modeling.py` — native/self/cross mixing,
-   bridge objective, and endpoint cache.
-4. `migration_v02/scripts/qualify_h0_h1.py` — matched native and endpoint gates.
-5. `migration_v02/scripts/qualify_h2_bridge.py` — bridge fit/test split, alpha
-   sweep, and verdict.
-6. Canonical JSON summaries under `migration_v02/runs/`; read the 512-step H2
-   summary first among raw evidence.
+1. `SCOPE.md` — the single direct A/B question and stop rule.
+2. `real_language_ab/RESULTS.md` — canonical result and claim boundary.
+3. `real_language_ab/PROTOCOL.md` — matched design and preregistered gates.
+4. `real_language_ab/src/interface_lm/modeling.py` — the only architectural
+   difference between A and B.
+5. The three small JSON files under `real_language_ab/runs/` — raw aggregates.
 
-## What changed
+## A versus B
 
-- Removed the trainable 1% replacement gate from the new formulation.
-- Added external, non-trainable `alpha` and `beta` schedules.
-- At `(alpha,beta)=(0,0)`, the custom path reproduces native Qwen.
-- At `(1,1)`, upper self K/V and lower full-history attention are absent from
-  deployment state.
-- Added a frozen-backbone teacher bridge for one shared memory K/V pair.
-- Corrected the v0.1 write-up: its FP32 smoke was ungated and therefore not
-  matched evidence for the later gated BF16 run.
+| | A: token-aligned | B: pair-wide |
+|---|---:|---:|
+| persistent records at N=256 | 256 | 128 |
+| persistent scalars / BF16 bytes | 262,144 / 524,288 | 262,144 / 524,288 |
+| paired held-out NLL, n=64 | 6.4144 | 6.3673 |
+| interface-ablation delta | +4.4662 | +4.2067 |
+| remote-context gain, 95% CI | -0.0035 [-0.0109, 0.0034] | +0.0100 [-0.0013, 0.0242] |
 
-## Decision-relevant evidence
-
-| Check | Result |
-|---|---:|
-| FP32 start morphism max abs / KL, L96 | `4.98e-05 / 2.20e-09` |
-| BF16 start morphism max abs / KL, L96 | `0 / 0` |
-| Native Qwen BF16 full/cache KL, L96 | `2.82e-06` |
-| Untrained CED endpoint BF16 full/cache KL, L96 | `0.02598` |
-| 512-step bridge fit error | `1.4559 -> 0.3632` |
-| 512-step bridge held-out error | `1.5780 -> 0.9218` |
-| Rollout at `alpha=0.50`, KL / top-1 | `0.2292 / 0.906` |
-| Rollout at `alpha=1.00`, KL / top-1 | `5.8122 / 0.031` |
-| Trained endpoint BF16 full/cache KL | `0.00216` |
-
-The exact homotopy start succeeds and bridge gradients carry useful signal.
-However, one shared K/V pair does not generalize across the 14 upper layers
-under this frozen-backbone bridge. The fully migrated rollout collapses, so no
-larger migration was launched.
-
-## What did not happen
-
-- No 20M-token migration run.
-- No full-model alpha schedule.
-- No lower-window beta schedule beyond endpoint structural qualification.
-- No shorter/wider interface experiment.
-- No claim that every homotopy or shared-memory architecture is impossible.
+The narrow positive result is that B is non-inferior to A for ordinary language
+modeling while using half as many records, and both models depend strongly on
+their interfaces. The primary remote-context substrate is **not qualified**:
+neither variant has an individually positive 95% confidence interval. This is a
+functional pilot, not a memory-saving, production-generation, or universal
+architecture claim. No rescue experiment is authorized by this update.
 
 ## Reviewer questions
 
-1. Does `(alpha,beta)=(0,0)` genuinely reproduce native Qwen rather than bypass
-   the custom path in the reported H0 comparison?
-2. Are self and shared-cross head outputs mixed in the correct location before
-   each original `o_proj`, with Q/O shared and memory K/V independently copied?
-3. Does the endpoint cache contain exactly 14 local windows plus one shared
-   global K/V, with no hidden upper self-attention cache?
-4. Is the bridge teacher extracted from each native upper attention output
-   without allowing gradients into the Qwen backbone or fit/test leakage?
-5. Is `BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED` the correct interpretation of the
-   held-out error plateau and alpha=1 rollout collapse?
-6. Is there one concrete implementation error that invalidates the negative
-   bridge result, or would any rescue require a materially new parameterization
-   such as layer-conditioned memory/adapters?
+1. Is record construction the only A/B architectural difference?
+2. Are causal availability and reader masks correct for both interfaces?
+3. Are parameter shapes, initialization, token order, optimizer, and updates
+   matched?
+4. Do the reported numbers support exactly the narrow interpretation above?
