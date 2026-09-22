@@ -1,5 +1,14 @@
 # Canonical results
 
+## Current real-language A/B pilot
+
+The matched co-adapted pilot is in `real_language_ab/RESULTS.md`. Pair-wide B
+is non-inferior on held-out NLL (`B-A = -0.0471`, paired 95% CI
+`[-0.0596,-0.0351]`) and both variants strongly use the interface. The robust
+remote-context gate is unqualified because A's expanded-sample gain crosses
+zero. Current status: `FUNCTIONAL_SIGNAL_REMOTE_SUBSTRATE_INVALID`. No rescue
+branch is authorized.
+
 ## Latest stage: Qwen-to-CED migration G0
 
 The original post-training architecture-migration attempt is archived under

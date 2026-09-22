@@ -17,3 +17,11 @@ interfaces, or `(M,D)` sweeps. Existing branches remain frozen evidence.
 If A cannot learn language, use remote context, and depend on its global
 interface within the small qualification budget, stop as
 `INVALID_REAL_LANGUAGE_SUBSTRATE` rather than adding another prerequisite.
+
+## Current outcome
+
+The v0.1 direct pilot is complete. B is non-inferior on held-out NLL and both
+variants depend on the interface, but the expanded evaluation does not qualify
+A's positive remote-context gain. Status:
+`FUNCTIONAL_SIGNAL_REMOTE_SUBSTRATE_INVALID`. See
+`real_language_ab/RESULTS.md`. The substrate is stopped without a rescue branch.

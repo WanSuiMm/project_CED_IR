@@ -4,6 +4,11 @@
 co-adapted `A: N x d` against `B: N/2 x 2d`. Read [`SCOPE.md`](SCOPE.md).
 All synthetic, oracle, and migration branches below are frozen history.
 
+The direct pilot is now complete: B is slightly better on held-out NLL and both
+models use the global interface, but A's remote-context gate is not robustly
+positive. The substrate is stopped rather than rescued. See
+[`real_language_ab/RESULTS.md`](real_language_ab/RESULTS.md).
+
 This repository contains one research project on whether token-level address
 records can be replaced by smaller persistent interfaces without losing the
 computation a decoder needs. It contains the original synthetic length-width

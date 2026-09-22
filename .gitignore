@@ -21,6 +21,9 @@ migration/runs/**/*.log
 migration_v02/data/
 migration_v02/runs/**/bridge_only_checkpoint.pt
 migration_v02/runs/**/*.log
+real_language_ab/data/
+real_language_ab/runs/**/checkpoint.pt
+real_language_ab/runs/**/*.log
 
 # Editor and OS files.
 .DS_Store
