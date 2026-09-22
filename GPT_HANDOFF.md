@@ -1,82 +1,83 @@
 # GPT incremental-review handoff
 
-This is an incremental review packet for the **same CED IR project**. The
-final R1b frozen-Qwen audit is inside `real_model_audit/`; it is not a separate
-project. The synthetic branch and all earlier evidence remain unchanged.
+This is an incremental review packet for the **same CED IR project**. It adds
+one stopped Qwen-to-CED migration stage under `migration/`; the synthetic and
+frozen-attention-oracle branches are unchanged.
 
 ## Review range
 
-- Base commit: `15d61a7413ef1fba646763e877a1b34fcb33fd86`
-- Evidence head: `b1fbab27a83502d32905e61641141a32261fbffb`
-- Update: final high-mass R1b attention-operator audit
-- Formal verdict: `ORACLE_OPTIMIZER_UNQUALIFIED`
+- Base commit: `bf4080695c98044bacbdb2e8e94e9db1240c5aa2`
+- Evidence head: `12322be874542afc5382cb7514d52327d27daf3c`
+- Update: real-checkpoint G0 implementation qualification
+- Formal verdict: `INVALID_CED_IMPLEMENTATION`
 
-The later commit that updates this handoff is metadata only. Review the fixed
-range above; do not reread the unchanged synthetic training pipeline or the
-preserved v0.1 Qwen evidence.
+The later commit updating this handoff is metadata only. Review the fixed range
+above; do not reread unchanged synthetic runs or `real_model_audit/`.
 
 ## Minimal reading order
 
-1. `real_model_audit/RESULTS.md` — terminal interpretation and claim boundary.
-2. `real_model_audit/R1B_PROTOCOL.md` — frozen design and ordered decision rule.
-3. `real_model_audit/runs/r1b_high_mass_v01/RESULTS.md` — generated aggregate.
-4. `real_model_audit/scripts/run_r1b_gate.py` — selection, fit/test split,
-   controls, intervention, and aggregation.
-5. `real_model_audit/src/aoc/oracle.py` — non-identity recovery initialization
-   and optimizer.
-6. `real_model_audit/runs/r1b_high_mass_v01/summary.json` only for per-unit
-   verification; do not open it first.
+1. `migration/RESULTS.md` — decision, exact metrics, and claim boundary.
+2. `migration/PROTOCOL.md` — frozen architecture and ordered gate.
+3. `migration/src/ced_migration/modeling.py` — actual tested CED, prefill,
+   incremental step, and cache accounting.
+4. `migration/scripts/qualify_g0.py` — test construction and verdict logic.
+5. `migration/runs/g0_qwen06b_bf16_gated_v01/summary.json` — formal evidence.
+6. `migration/runs/g0_smoke_fp32_v02/summary.json` and
+   `migration/runs/qwen_bf16_cache_l12_v02.json` — structural smoke and native
+   Qwen numerical calibration.
+
+Do not start with older JSONL evidence. No large checkpoint or token corpus is
+needed for this review.
 
 ## What changed
 
-- Added three disjoint query spans: `Q_select`, `Q_fit`, and `Q_test`.
-- Selected the highest-mass eligible old 64-token region using only
-  `Q_select`; the selected region was then frozen for fit and test.
-- Added separate fit and test operator metrics.
-- Added an exact-start `8 -> 8` preservation control.
-- Added a learned non-identity `8 -> 8` recovery control initialized from
-  duplicated adjacent-pair means. Four noisy restarts break the duplicated
-  symmetry; one deterministic restart is retained.
-- Retested `8 -> 4` only; no compiler, adapter, or Qwen parameter was trained.
+- Added a Qwen3-0.6B warm-start CED: 14 causal local-window layers, one shared
+  token-aligned global K/V memory, and 14 upper cross-decoder layers with no
+  upper time-axis self-attention.
+- Added parallel prefill and incremental decode paths with explicit cache
+  accounting.
+- Added a trainable 1% scalar gate to each new cross-attention residual. The
+  archived code does not contain the later, untested MLP-gating idea.
+- Added real-weight causal, cache, remote-path, backward, optimizer, reload,
+  and BF16 numerical qualification.
+- Stopped before data preparation or 20M-token C/A training.
 
 ## New decision-relevant evidence
 
 | Metric | Result | Frozen requirement |
 |---|---:|---:|
-| Manual-exact maximum mismatch | 0.3031% | <= 1% |
-| Exact-start `8 -> 8` fit/test error | 0 | <= 1e-4 |
-| Recovery `8 -> 8` fit log-Z / mu median | 0.0199 / 0.0429 | both <= 0.02 |
-| Recovery `8 -> 8` test log-Z / mu median | 0.5688 / 0.2062 | both <= 0.02 |
-| Recovery units meeting both 0.05 test limits | 0 / 36 | >= 27 / 36 |
-| Selected-region mass on `Q_select` | 1.0885% median | >= 2% |
-| Selected-region mass on `Q_test` | 0.3914% median | >= 2% |
-| Units retaining at least 2% test mass | 3 / 36 | >= 18 / 36 |
-| `8 -> 4` test log-Z / mu median | 0.6152 / 0.3006 | descriptive after recovery failure |
+| FP32 cached max / mean abs, length 12 | `9.44e-05 / 9.75e-06` | `<= 1e-3 / 1e-4` |
+| BF16 deployment mean KL, length 32 | `0.02442` | `<= 0.001` |
+| BF16 deployment top-1 agreement | `1.000` | `>= 0.99` |
+| Future-edit maximum | `0` | `0` |
+| Local-only beyond-window edit maximum | `0` | near `0` |
+| Global-memory ablation relative change | `0.1355` | `> 0` |
+| Native-Qwen BF16 deployment KL, length 12 | `0.0009323` | calibration only |
 
-The exact algebra and intervention implementation qualify. The learned oracle
-does not recover a known-to-exist eight-record solution on held-out queries,
-so it is not qualified to support an `8 -> 4` capacity conclusion. The
-calibration-selected region also fails to remain high-mass, but optimizer
-qualification precedes mass in the frozen decision order.
+FP32 smoke suggests structurally consistent prefill/incremental equations, but
+the actual BF16 endpoint fails by a wide margin. The native-Qwen calibration
+has a different length and must not be treated as a matched quantitative
+baseline.
 
-## What did not change
+## What did not happen
 
-- All synthetic checkpoints, G1 results, addressing audit, supervised slot
-  probe, and matched record-permutation control are unchanged.
-- The v0.1 Qwen run remains preserved with verdict `INCONCLUSIVE_LOW_MASS`.
-- No amortized compiler, Qwen adaptation, continued pretraining, kernel, or
-  system-speed measurement was performed.
-- The result is not a universal impossibility theorem for learned interfaces.
+- No 20M-token Qwen-CPT versus token-CED comparison was run.
+- No shorter/wider CED variant was implemented or trained.
+- No claim is made that CED migration is impossible.
+- No earlier evidence, checkpoint, or verdict was changed.
 
 ## Reviewer questions
 
-1. Is candidate selection isolated to `Q_select`, with no `Q_fit` or `Q_test`
-   leakage into region choice?
-2. Is the pair-mean `8 -> 8` initialization genuinely non-identity, and do the
-   noisy restarts adequately break its duplicated-record symmetry?
-3. Are fit/test log-Z and conditional-value errors weighted and aggregated at
-   the preregistered sequence-layer independent-unit level?
-4. Does `ORACLE_OPTIMIZER_UNQUALIFIED` correctly precede both mass diagnoses
-   and the `8 -> 4` capacity decision?
-5. Is the terminal claim properly scoped to stopping this local `8 -> c`
-   formulation rather than asserting a universal impossibility result?
+1. Does `prefill()` plus `step()` implement the same causal computation as
+   `forward()`, including rotary positions, local-window boundaries, and shared
+   memory growth?
+2. Is the BF16 discrepancy plausibly an implementation/numerical artifact, or
+   does the architecture create an inherently ill-conditioned warm start under
+   this parameterization?
+3. Are the cache-accounting assertions sufficient to exclude hidden original
+   full-history per-layer K/V state?
+4. Is the 1% cross-residual gate applied in a way that preserves the intended
+   gradient path without silently reintroducing Qwen upper self-attention?
+5. Given the failed preregistered BF16 gate, is stopping before G1 the correct
+   scientific decision, and what single code-level defect—if any—would justify
+   reopening G0?
