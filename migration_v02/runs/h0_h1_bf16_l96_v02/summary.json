@@ -1,0 +1,63 @@
+{
+  "protocol": "QWEN_CED_HOMOTOPY_v0.2",
+  "verdict": "FAIL_H1_ENDPOINT",
+  "model": "Qwen/Qwen3-0.6B-Base",
+  "arguments": {
+    "model": "Qwen/Qwen3-0.6B-Base",
+    "cache_dir": "<external-model-cache>",
+    "output": "runs/h0_h1_bf16_l96_v02",
+    "dtype": "bf16",
+    "length": 96,
+    "remote_length": 896,
+    "window": 64,
+    "seed": 20260922,
+    "skip_remote": false
+  },
+  "metrics": {
+    "h0_custom_start_vs_native": {
+      "max_abs": 0.0,
+      "mean_abs": 0.0,
+      "relative": 0.0,
+      "mean_kl": 0.0,
+      "top1_agreement": 1.0
+    },
+    "native_full_vs_cache": {
+      "max_abs": 0.15625,
+      "mean_abs": 0.01299166027456522,
+      "relative": 0.006903576664626598,
+      "mean_kl": 2.8208505682414398e-06,
+      "top1_agreement": 1.0
+    },
+    "h1_endpoint_full_vs_cache": {
+      "max_abs": 1.53125,
+      "mean_abs": 0.22536683082580566,
+      "relative": 0.06597230583429337,
+      "mean_kl": 0.025983531028032303,
+      "top1_agreement": 1.0
+    },
+    "future_edit_max": 0.0,
+    "remote_path": {
+      "enabled_edit_relative": 0.4997691214084625,
+      "disabled_edit_max": 0.0,
+      "ablation_relative": 1.09334135055542
+    },
+    "cache_accounting": {
+      "local_kv_elements": 1835008,
+      "global_kv_elements": 196608,
+      "upper_self_kv_elements": 0,
+      "retained_encoder_state_elements": 0,
+      "sequence_length": 96
+    },
+    "reload_max_abs": 0.0,
+    "train_loss": 10.549993515014648,
+    "bridge_grad_finite": true,
+    "bridge_parameter_moved": true
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "duration_seconds": 8.872586488723755
+}

@@ -12,8 +12,8 @@ model—read files in this order:
 
 1. [`GPT_HANDOFF.md`](GPT_HANDOFF.md): latest incremental review range and
    changed evidence
-2. [`migration/RESULTS.md`](migration/RESULTS.md): latest Qwen-to-CED migration
-   qualification and stop decision
+2. [`migration_v02/RESULTS.md`](migration_v02/RESULTS.md): latest
+   function-preserving homotopy qualification and stop decision
 3. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
    file-routing instructions
 4. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
@@ -52,11 +52,12 @@ held-out queries, and median test attention mass was only 0.391%. The formal
 verdict is `ORACLE_OPTIMIZER_UNQUALIFIED`; the local operator-compression branch
 is stopped. See [`real_model_audit/RESULTS.md`](real_model_audit/RESULTS.md).
 
-The latest stage attempted a true Qwen3-0.6B-to-CED warm start. Its FP32
-structural smoke passed, but the deployed BF16 prefill-plus-cache route failed
-the frozen parity gate (`0.02442` mean KL versus `0.001`). Therefore G1
-continued pretraining and the shorter/wider comparison were not run. See
-[`migration/RESULTS.md`](migration/RESULTS.md).
+The latest stage replaced the invalid 1%-gate warm start with a
+function-preserving Qwen-to-CED homotopy. Native Qwen is recovered at the start,
+but one shared K/V bridge remains poor on held-out layers/examples and the
+fully migrated rollout collapses (`5.8122` LM KL, 3.1% top-1 agreement). The
+larger migration and shorter/wider comparison were not run. See
+[`migration_v02/RESULTS.md`](migration_v02/RESULTS.md).
 
 A subsequent directly supervised oracle-block probe changes the mechanism
 interpretation: the rank-16 bilinear gate family decodes the physical source
@@ -90,6 +91,8 @@ claim boundary.
   implementation, tests, preserved v0.1 evidence, and terminal R1b audit
 - `migration/`: Qwen-to-CED G0 implementation, negative qualification evidence,
   and stopped G1 plan
+- `migration_v02/`: function-preserving homotopy implementation, matched gates,
+  bridge pilot, and terminal stop decision
 - `runs/`: compact result summaries and per-sample evidence; checkpoints and
   machine-specific receipts are intentionally excluded
 

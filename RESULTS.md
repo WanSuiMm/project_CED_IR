@@ -2,13 +2,18 @@
 
 ## Latest stage: Qwen-to-CED migration G0
 
-The post-training architecture-migration attempt is archived under
-`migration/`. FP32 structural cache parity passed, but the formal BF16
-prefill-plus-one-continuation endpoint produced mean KL `0.02442`, above the
-frozen `0.001` limit. Its verdict is `INVALID_CED_IMPLEMENTATION`. No 20M-token
-C/A training or shorter/wider comparison was run. This is an implementation
-qualification failure, not an impossibility result for CED migration; see
-`migration/RESULTS.md` for the exact claim boundary.
+The original post-training architecture-migration attempt is archived under
+`migration/`. Its formal gated BF16 endpoint produced mean KL `0.02442`, above
+the frozen `0.001` limit. The earlier FP32 smoke used the ungated predecessor
+and is not matched evidence. Its verdict remains `INVALID_CED_IMPLEMENTATION`.
+
+A replacement function-preserving homotopy is archived under `migration_v02/`.
+It reproduces native Qwen at `(alpha,beta)=(0,0)` and passes endpoint structure
+in FP32, but the BF16 endpoint is ill-conditioned and a 512-step frozen-backbone
+bridge leaves held-out normalized error at `0.9218`. At `alpha=1`, LM KL is
+`5.8122` and top-1 agreement is `0.031`. Its verdict is
+`BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED`. No 20M-token migration or shorter/wider
+comparison was run. See `migration_v02/RESULTS.md`.
 
 All primary numbers below come from the frozen 4,096-example test split at the
 pre-registered terminal checkpoint. Exact match is computed per four-digit

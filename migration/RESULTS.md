@@ -8,16 +8,18 @@ g1_training_status = NOT_RUN
 short_wide_status  = NOT_AUTHORIZED
 ```
 
-The tested Qwen3-0.6B warm start passes the FP32 structural smoke but fails the
-frozen BF16 deployment-parity gate. The project stops here: no 20M-token
-continued-pretraining comparison was launched.
+The formal gated Qwen3-0.6B warm start fails the frozen BF16 deployment-parity
+gate. An earlier ungated implementation passed an FP32 structural smoke, but
+because it differs by the 14 cross-attention gate scalars it is not matched
+evidence for the formal gated implementation. The project stops here: no
+20M-token continued-pretraining comparison was launched.
 
 ## Evidence
 
 | Check | Result | Requirement | Status |
 |---|---:|---:|---|
-| FP32 prefill + one cached continuation, max abs | `9.44e-05` | `<= 1e-3` | pass (smoke) |
-| FP32 prefill + one cached continuation, mean abs | `9.75e-06` | `<= 1e-4` | pass (smoke) |
+| Ungated FP32 prefill + one cached continuation, max abs | `9.44e-05` | `<= 1e-3` | pass (unmatched smoke) |
+| Ungated FP32 prefill + one cached continuation, mean abs | `9.75e-06` | `<= 1e-4` | pass (unmatched smoke) |
 | BF16 prefill + one cached continuation, mean KL | `0.02442` | `<= 0.001` | **fail** |
 | BF16 prefill + one cached continuation, top-1 agreement | `1.000` | `>= 0.99` | pass |
 | Future-token edit effect on earlier logits | `0` | `0` | pass |
@@ -32,10 +34,10 @@ matched-length baseline for the length-32 CED result.
 ## Interpretation
 
 The zero cache-accounting, causal, gradient, and save/reload controls do not
-explain away the failure. FP32 smoke parity indicates that the prefill and
-incremental equations are structurally consistent at short length. However,
-the actual BF16 route is far outside the preregistered KL threshold, so this
-implementation is not qualified for a scientific C/A migration comparison.
+explain away the failure. The unmatched FP32 smoke is useful implementation
+history but cannot isolate dtype from the later gate change or length change.
+The actual formal BF16 route is far outside the preregistered KL threshold, so
+this implementation is not qualified for a scientific C/A comparison.
 
 This result does **not** show that causal CED migration is impossible. It shows
 that the tested direct warm start—14 local-window Qwen layers, one shared

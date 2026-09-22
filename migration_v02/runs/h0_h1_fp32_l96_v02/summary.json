@@ -1,0 +1,63 @@
+{
+  "protocol": "QWEN_CED_HOMOTOPY_v0.2",
+  "verdict": "PASS_H0_H1",
+  "model": "Qwen/Qwen3-0.6B-Base",
+  "arguments": {
+    "model": "Qwen/Qwen3-0.6B-Base",
+    "cache_dir": "<external-model-cache>",
+    "output": "runs/h0_h1_fp32_l96_v02",
+    "dtype": "float32",
+    "length": 96,
+    "remote_length": 896,
+    "window": 64,
+    "seed": 20260922,
+    "skip_remote": false
+  },
+  "metrics": {
+    "h0_custom_start_vs_native": {
+      "max_abs": 4.982948303222656e-05,
+      "mean_abs": 4.0897166400100105e-06,
+      "relative": 1.3516010994862881e-06,
+      "mean_kl": 2.198502269123992e-09,
+      "top1_agreement": 1.0
+    },
+    "native_full_vs_cache": {
+      "max_abs": 2.1457672119140625e-05,
+      "mean_abs": 1.2531859283626545e-06,
+      "relative": 6.545747055497486e-07,
+      "mean_kl": 1.0740495604011357e-08,
+      "top1_agreement": 1.0
+    },
+    "h1_endpoint_full_vs_cache": {
+      "max_abs": 9.965896606445312e-05,
+      "mean_abs": 1.1804909263446461e-05,
+      "relative": 3.4700121886999113e-06,
+      "mean_kl": -2.5058776031983143e-07,
+      "top1_agreement": 1.0
+    },
+    "future_edit_max": 0.0,
+    "remote_path": {
+      "enabled_edit_relative": 0.5379034280776978,
+      "disabled_edit_max": 0.0,
+      "ablation_relative": 1.0777281522750854
+    },
+    "cache_accounting": {
+      "local_kv_elements": 1835008,
+      "global_kv_elements": 196608,
+      "upper_self_kv_elements": 0,
+      "retained_encoder_state_elements": 0,
+      "sequence_length": 96
+    },
+    "reload_max_abs": 0.0,
+    "train_loss": 10.53794002532959,
+    "bridge_grad_finite": true,
+    "bridge_parameter_moved": true
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "duration_seconds": 7.77711820602417
+}

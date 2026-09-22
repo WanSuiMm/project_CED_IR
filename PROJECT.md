@@ -5,7 +5,8 @@ zero-training addressing audit, and the supervised oracle-block slot probe are
 complete. The matched record-permutation shortcut control and the frozen-Qwen
 R0/R1 plus final R1b attention-operator audits are also complete. A subsequent
 Qwen-to-CED migration attempt stopped at G0 with `INVALID_CED_IMPLEMENTATION`;
-no 20M-token migration training was run.
+its function-preserving v0.2 replacement found bridge signal but failed the
+shared-memory qualification. No 20M-token migration training was run.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
@@ -69,3 +70,10 @@ cache-accounting controls pass and its FP32 structural smoke is consistent, but
 the formal BF16 prefill-plus-continuation parity KL is `0.02442`, above the
 frozen `0.001` limit. The migration stage is archived at G0; G1 and the
 shorter/wider comparison remain unrun.
+
+`migration_v02/` replaces the invalid warm start with exact Qwen/CED homotopy
+controls. The start morphism and FP32 endpoint structure pass. However, the
+shared-memory bridge overfits the tiny fit set, leaves `0.9218` normalized
+held-out error, and collapses at full removal of upper self-attention. The
+formal v0.2 status is `BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED`; larger migration
+remains unauthorized.

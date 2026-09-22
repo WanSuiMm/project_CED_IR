@@ -8,11 +8,12 @@ pretrained decoders?
 
 ## What this project is—and is not
 
-This is one research project with three evidence stages: a synthetic
+This is one research project with four evidence stages: a synthetic
 architecture wind tunnel, a frozen-Qwen3 attention-operator audit under
 `real_model_audit/`, and a stopped Qwen-to-CED implementation qualification
-under `migration/`. None is a systems-speedup claim or a completed
-post-training migration. The latest stage failed G0 before formal training.
+under `migration/`, followed by a function-preserving homotopy audit under
+`migration_v02/`. None is a systems-speedup claim or a completed post-training
+migration. The latest stage stopped before any large migration run.
 
 ## Variants
 
@@ -71,6 +72,9 @@ resolution.
 - real-model compiler/adaptation status: `FROZEN_NOT_AUTHORIZED`
 - Qwen-to-CED G0 status: `INVALID_CED_IMPLEMENTATION`
 - Qwen-to-CED G1 training status: `NOT_RUN`
+- homotopy H0 status: `PASS`
+- homotopy H1 BF16 status: `FAIL_NUMERICAL_CONDITIONING`
+- homotopy H2 status: `BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED`
 
 ## Code routing
 
@@ -101,6 +105,10 @@ resolution.
   and `migration/scripts/qualify_g0.py`
 - Migration formal G0 evidence:
   `migration/runs/g0_qwen06b_bf16_gated_v01/summary.json`
+- Homotopy terminal result: `migration_v02/RESULTS.md`
+- Homotopy implementation: `migration_v02/src/ced_homotopy/modeling.py`
+- Canonical bridge evidence:
+  `migration_v02/runs/h2_bridge_s512_l64_v02/summary.json`
 - Raw per-example evidence: `test_samples*.jsonl`
 
 ## Recommended review behavior
