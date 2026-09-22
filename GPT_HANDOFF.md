@@ -1,83 +1,81 @@
 # GPT incremental-review handoff
 
 This is an incremental review packet for the **same CED IR project**. It adds
-one stopped Qwen-to-CED migration stage under `migration/`; the synthetic and
-frozen-attention-oracle branches are unchanged.
+the function-preserving homotopy follow-up under `migration_v02/`. All synthetic
+and frozen-attention-oracle evidence is unchanged.
 
 ## Review range
 
-- Base commit: `bf4080695c98044bacbdb2e8e94e9db1240c5aa2`
-- Evidence head: `12322be874542afc5382cb7514d52327d27daf3c`
-- Update: real-checkpoint G0 implementation qualification
-- Formal verdict: `INVALID_CED_IMPLEMENTATION`
+- Base commit: `83c78e9173d8f325a406a6dca418e8e8895b960a`
+- Evidence head: `6738b1cd99f531725c1697c603e6802742aef2d4`
+- Update: Qwen-to-CED homotopy implementation and three qualification gates
+- Terminal verdict: `BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED`
 
 The later commit updating this handoff is metadata only. Review the fixed range
-above; do not reread unchanged synthetic runs or `real_model_audit/`.
+above; do not reread old synthetic runs or `real_model_audit/`.
 
 ## Minimal reading order
 
-1. `migration/RESULTS.md` — decision, exact metrics, and claim boundary.
-2. `migration/PROTOCOL.md` — frozen architecture and ordered gate.
-3. `migration/src/ced_migration/modeling.py` — actual tested CED, prefill,
-   incremental step, and cache accounting.
-4. `migration/scripts/qualify_g0.py` — test construction and verdict logic.
-5. `migration/runs/g0_qwen06b_bf16_gated_v01/summary.json` — formal evidence.
-6. `migration/runs/g0_smoke_fp32_v02/summary.json` and
-   `migration/runs/qwen_bf16_cache_l12_v02.json` — structural smoke and native
-   Qwen numerical calibration.
-
-Do not start with older JSONL evidence. No large checkpoint or token corpus is
-needed for this review.
+1. `migration_v02/RESULTS.md` — terminal decision and exact claim boundary.
+2. `migration_v02/PROTOCOL.md` — two-knob morphism and frozen gate order.
+3. `migration_v02/src/ced_homotopy/modeling.py` — native/self/cross mixing,
+   bridge objective, and endpoint cache.
+4. `migration_v02/scripts/qualify_h0_h1.py` — matched native and endpoint gates.
+5. `migration_v02/scripts/qualify_h2_bridge.py` — bridge fit/test split, alpha
+   sweep, and verdict.
+6. Canonical JSON summaries under `migration_v02/runs/`; read the 512-step H2
+   summary first among raw evidence.
 
 ## What changed
 
-- Added a Qwen3-0.6B warm-start CED: 14 causal local-window layers, one shared
-  token-aligned global K/V memory, and 14 upper cross-decoder layers with no
-  upper time-axis self-attention.
-- Added parallel prefill and incremental decode paths with explicit cache
-  accounting.
-- Added a trainable 1% scalar gate to each new cross-attention residual. The
-  archived code does not contain the later, untested MLP-gating idea.
-- Added real-weight causal, cache, remote-path, backward, optimizer, reload,
-  and BF16 numerical qualification.
-- Stopped before data preparation or 20M-token C/A training.
+- Removed the trainable 1% replacement gate from the new formulation.
+- Added external, non-trainable `alpha` and `beta` schedules.
+- At `(alpha,beta)=(0,0)`, the custom path reproduces native Qwen.
+- At `(1,1)`, upper self K/V and lower full-history attention are absent from
+  deployment state.
+- Added a frozen-backbone teacher bridge for one shared memory K/V pair.
+- Corrected the v0.1 write-up: its FP32 smoke was ungated and therefore not
+  matched evidence for the later gated BF16 run.
 
-## New decision-relevant evidence
+## Decision-relevant evidence
 
-| Metric | Result | Frozen requirement |
-|---|---:|---:|
-| FP32 cached max / mean abs, length 12 | `9.44e-05 / 9.75e-06` | `<= 1e-3 / 1e-4` |
-| BF16 deployment mean KL, length 32 | `0.02442` | `<= 0.001` |
-| BF16 deployment top-1 agreement | `1.000` | `>= 0.99` |
-| Future-edit maximum | `0` | `0` |
-| Local-only beyond-window edit maximum | `0` | near `0` |
-| Global-memory ablation relative change | `0.1355` | `> 0` |
-| Native-Qwen BF16 deployment KL, length 12 | `0.0009323` | calibration only |
+| Check | Result |
+|---|---:|
+| FP32 start morphism max abs / KL, L96 | `4.98e-05 / 2.20e-09` |
+| BF16 start morphism max abs / KL, L96 | `0 / 0` |
+| Native Qwen BF16 full/cache KL, L96 | `2.82e-06` |
+| Untrained CED endpoint BF16 full/cache KL, L96 | `0.02598` |
+| 512-step bridge fit error | `1.4559 -> 0.3632` |
+| 512-step bridge held-out error | `1.5780 -> 0.9218` |
+| Rollout at `alpha=0.50`, KL / top-1 | `0.2292 / 0.906` |
+| Rollout at `alpha=1.00`, KL / top-1 | `5.8122 / 0.031` |
+| Trained endpoint BF16 full/cache KL | `0.00216` |
 
-FP32 smoke suggests structurally consistent prefill/incremental equations, but
-the actual BF16 endpoint fails by a wide margin. The native-Qwen calibration
-has a different length and must not be treated as a matched quantitative
-baseline.
+The exact homotopy start succeeds and bridge gradients carry useful signal.
+However, one shared K/V pair does not generalize across the 14 upper layers
+under this frozen-backbone bridge. The fully migrated rollout collapses, so no
+larger migration was launched.
 
 ## What did not happen
 
-- No 20M-token Qwen-CPT versus token-CED comparison was run.
-- No shorter/wider CED variant was implemented or trained.
-- No claim is made that CED migration is impossible.
-- No earlier evidence, checkpoint, or verdict was changed.
+- No 20M-token migration run.
+- No full-model alpha schedule.
+- No lower-window beta schedule beyond endpoint structural qualification.
+- No shorter/wider interface experiment.
+- No claim that every homotopy or shared-memory architecture is impossible.
 
 ## Reviewer questions
 
-1. Does `prefill()` plus `step()` implement the same causal computation as
-   `forward()`, including rotary positions, local-window boundaries, and shared
-   memory growth?
-2. Is the BF16 discrepancy plausibly an implementation/numerical artifact, or
-   does the architecture create an inherently ill-conditioned warm start under
-   this parameterization?
-3. Are the cache-accounting assertions sufficient to exclude hidden original
-   full-history per-layer K/V state?
-4. Is the 1% cross-residual gate applied in a way that preserves the intended
-   gradient path without silently reintroducing Qwen upper self-attention?
-5. Given the failed preregistered BF16 gate, is stopping before G1 the correct
-   scientific decision, and what single code-level defect—if any—would justify
-   reopening G0?
+1. Does `(alpha,beta)=(0,0)` genuinely reproduce native Qwen rather than bypass
+   the custom path in the reported H0 comparison?
+2. Are self and shared-cross head outputs mixed in the correct location before
+   each original `o_proj`, with Q/O shared and memory K/V independently copied?
+3. Does the endpoint cache contain exactly 14 local windows plus one shared
+   global K/V, with no hidden upper self-attention cache?
+4. Is the bridge teacher extracted from each native upper attention output
+   without allowing gradients into the Qwen backbone or fit/test leakage?
+5. Is `BRIDGE_SIGNAL_PRESENT_NOT_QUALIFIED` the correct interpretation of the
+   held-out error plateau and alpha=1 rollout collapse?
+6. Is there one concrete implementation error that invalidates the negative
+   bridge result, or would any rescue require a materially new parameterization
+   such as layer-conditioned memory/adapters?
