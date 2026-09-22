@@ -1,5 +1,9 @@
 # CED IR Research Project
 
+**Current scope:** the next result must directly compare real-language,
+co-adapted `A: N x d` against `B: N/2 x 2d`. Read [`SCOPE.md`](SCOPE.md).
+All synthetic, oracle, and migration branches below are frozen history.
+
 This repository contains one research project on whether token-level address
 records can be replaced by smaller persistent interfaces without losing the
 computation a decoder needs. It contains the original synthetic length-width
