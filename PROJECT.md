@@ -8,6 +8,10 @@ Qwen-to-CED migration attempt stopped at G0 with `INVALID_CED_IMPLEMENTATION`;
 its function-preserving v0.2 replacement found bridge signal but failed the
 shared-memory qualification. No 20M-token migration training was run.
 
+The latest direct real-language standard-KV A/B pilot passes its paired NLL
+non-inferiority gate at 256 tokens; remote-context use and decode speed remain
+unqualified. See `real_language_ab/RESULTS_STANDARD_KV_v0.2.md`.
+
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
 This project asks whether token-level long-range address records can be replaced

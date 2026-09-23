@@ -1,6 +1,10 @@
 # A/B address-width cost model
 
-This is arithmetic for the current pilot architecture, **not a latency or
+The table below describes the v0.1 **wide-V** architecture. The later
+standard-KV comparison and its narrower cost figures are in
+`RESULTS_STANDARD_KV_v0.2.md`.
+
+This is arithmetic for the v0.1 pilot architecture, **not a latency or
 memory benchmark**. It answers whether halving addressable records can have a
 systems payoff before another functional experiment is considered.
 
@@ -50,7 +54,7 @@ is not a bandwidth measurement or an attainable time saving. As a scale check,
 3 MiB divided by an *assumed* 1 TB/s effective bandwidth is 3.15 microseconds
 per query; this does not predict kernel or end-to-end latency.
 
-In the **current implementation**, each reader layer uses a dense `2048 →
+In the **v0.1 implementation**, each reader layer uses a dense `2048 →
 1024/2048` K/V projection. Projecting all records once costs 12.935 G FLOPs
 for A versus 6.493 G for B across four layers at `N=256`. The apparent
 projection saving comes from A physically constructing `[h; 0]` and still

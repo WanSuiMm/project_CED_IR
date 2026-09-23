@@ -1,6 +1,8 @@
 # Real-language A/B
 
-This directory is the only active experiment. Read `PROTOCOL.md` first.
+Read `RESULTS_STANDARD_KV_v0.2.md` and `PROTOCOL_STANDARD_KV_v0.2.md` for the
+current direct A/B comparison. The original wide-V pilot remains under
+`PROTOCOL.md` and `RESULTS.md`.
 
 - `src/interface_lm/modeling.py`: matched A/B model.
 - `scripts/prepare_wikitext.py`: deterministic capped token stream.

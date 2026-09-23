@@ -1,0 +1,116 @@
+{
+  "protocol": "REAL_LANGUAGE_STANDARD_KV_AB_v0.2",
+  "variant": "A_TOKEN",
+  "verdict": "A_STANDARD_TRAINED",
+  "arguments": {
+    "variant": "A_TOKEN",
+    "model": "Qwen/Qwen3-0.6B-Base",
+    "cache_dir": "<external-model-cache>",
+    "data": "<local-token-cache>",
+    "output": "runs/a_token_standard_kv_s256_l256_v02",
+    "steps": 256,
+    "sequence_length": 256,
+    "producer_layers": 4,
+    "reader_layers": 4,
+    "local_window": 16,
+    "value_head_multiplier": 1,
+    "learning_rate": 3e-05,
+    "weight_decay": 0.1,
+    "eval_sequences": 32,
+    "eval_every": 64,
+    "seed": 20260922,
+    "reference_summary": null
+  },
+  "metrics": {
+    "initial_validation_nll": 17.749667584896088,
+    "final_validation_nll": 6.6792071759700775,
+    "nll_improvement": 11.07046040892601,
+    "trace": [
+      {
+        "step": 0,
+        "validation_nll": 17.749667584896088
+      },
+      {
+        "step": 64,
+        "validation_nll": 8.241682335734367,
+        "train_nll": 7.815179347991943,
+        "grad_norm": 51.5
+      },
+      {
+        "step": 128,
+        "validation_nll": 7.318629413843155,
+        "train_nll": 6.799266338348389,
+        "grad_norm": 50.5
+      },
+      {
+        "step": 192,
+        "validation_nll": 7.258179128170013,
+        "train_nll": 7.58799409866333,
+        "grad_norm": 40.0
+      },
+      {
+        "step": 256,
+        "validation_nll": 6.6792071759700775,
+        "train_nll": 6.09738826751709,
+        "grad_norm": 35.0
+      }
+    ],
+    "remote": {
+      "correct_suffix_nll": 6.481656789779663,
+      "mismatched_prefix_suffix_nll": 6.477928459644318,
+      "remote_context_gain": -0.003728330135345459,
+      "ablated_suffix_nll": 10.955634832382202,
+      "interface_ablation_delta": 4.473978042602539
+    },
+    "generation": {
+      "token_ids": [
+        279,
+        279,
+        8284,
+        1154,
+        323,
+        279,
+        3100,
+        1154,
+        323,
+        572,
+        279,
+        3100,
+        1154,
+        323,
+        572,
+        279,
+        3100,
+        1154,
+        323,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572,
+        572
+      ],
+      "distinct_token_ratio": 0.1875,
+      "text": " the the ship , and the light , and was the light , and was the light , and was was was was was was was was was was was was was"
+    },
+    "parameter_count": 289821696,
+    "trainable_parameter_count": 289821696,
+    "persistent_scalars_at_sequence_length": 262144,
+    "persistent_records_at_sequence_length": 256,
+    "persistent_bytes_bf16": 524288
+  },
+  "environment": {
+    "python": "3.12.13",
+    "torch": "2.11.0+cu128",
+    "cuda": "12.8",
+    "device": "NVIDIA GeForce RTX 5090"
+  },
+  "duration_seconds": 10.529352188110352
+}
