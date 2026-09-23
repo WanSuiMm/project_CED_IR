@@ -33,8 +33,10 @@ def _scale(attn: nn.Module) -> float:
 
 
 class InterfaceReaderLayer(nn.Module):
-    def __init__(self, source: nn.Module, hidden_size: int):
+    def __init__(self, source: nn.Module, hidden_size: int, value_head_multiplier: int = 2):
         super().__init__()
+        if value_head_multiplier not in (1, 2):
+            raise ValueError("value_head_multiplier must be 1 or 2")
         attn = source.self_attn
         self.input_layernorm = copy.deepcopy(source.input_layernorm)
         self.post_attention_layernorm = copy.deepcopy(source.post_attention_layernorm)
@@ -49,7 +51,7 @@ class InterfaceReaderLayer(nn.Module):
 
         record_width = 2 * hidden_size
         key_width = self.kv_heads * self.head_dim
-        value_head_dim = 2 * self.head_dim
+        value_head_dim = value_head_multiplier * self.head_dim
         value_width = self.kv_heads * value_head_dim
         self.value_head_dim = value_head_dim
         self.k_proj = nn.Linear(record_width, key_width, bias=attn.k_proj.bias is not None)
@@ -122,6 +124,7 @@ class InterfaceLM(nn.Module):
         producer_layers: int = 4,
         reader_layers: int = 4,
         local_window: int = 16,
+        value_head_multiplier: int = 2,
     ):
         super().__init__()
         if variant not in {"A_TOKEN", "B_PAIR_WIDE"}:
@@ -129,6 +132,7 @@ class InterfaceLM(nn.Module):
         if producer_layers + reader_layers > len(base_model.model.layers):
             raise ValueError("requested more layers than checkpoint provides")
         self.variant = variant
+        self.value_head_multiplier = value_head_multiplier
         self.config = base_model.config
         self.local_window = int(local_window)
         self.embed_tokens = copy.deepcopy(base_model.model.embed_tokens)
@@ -138,7 +142,7 @@ class InterfaceLM(nn.Module):
         )
         hidden_size = int(base_model.config.hidden_size)
         self.reader = nn.ModuleList(
-            InterfaceReaderLayer(layer, hidden_size)
+            InterfaceReaderLayer(layer, hidden_size, value_head_multiplier)
             for layer in base_model.model.layers[
                 producer_layers : producer_layers + reader_layers
             ]

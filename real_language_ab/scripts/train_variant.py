@@ -29,6 +29,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--producer-layers", type=int, default=4)
     p.add_argument("--reader-layers", type=int, default=4)
     p.add_argument("--local-window", type=int, default=16)
+    p.add_argument("--value-head-multiplier", type=int, choices=(1, 2), default=2)
     p.add_argument("--learning-rate", type=float, default=3e-5)
     p.add_argument("--weight-decay", type=float, default=0.1)
     p.add_argument("--eval-sequences", type=int, default=32)
@@ -125,6 +126,7 @@ def main() -> None:
         producer_layers=args.producer_layers,
         reader_layers=args.reader_layers,
         local_window=args.local_window,
+        value_head_multiplier=args.value_head_multiplier,
     ).to(device="cuda", dtype=torch.bfloat16)
     del base
     optimizer = torch.optim.AdamW(
@@ -162,7 +164,23 @@ def main() -> None:
         and remote["remote_context_gain"] > 0.0
         and remote["interface_ablation_delta"] >= 0.01
     )
-    if args.variant == "A_TOKEN":
+    if args.value_head_multiplier == 1:
+        if args.variant == "A_TOKEN":
+            valid = (
+                initial_nll - final_nll >= 0.20
+                and remote["interface_ablation_delta"] >= 0.01
+            )
+            verdict = "A_STANDARD_TRAINED" if valid else "A_STANDARD_INVALID"
+        else:
+            verdict = "B_STANDARD_COMPLETE_UNCOMPARED"
+            if args.reference_summary:
+                reference = json.loads(args.reference_summary.read_text(encoding="utf-8"))
+                gap = final_nll - reference["metrics"]["final_validation_nll"]
+                verdict = (
+                    "B_STANDARD_POINT_NONINFERIOR" if gap <= 0.10
+                    else "B_STANDARD_POINT_INFERIOR"
+                )
+    elif args.variant == "A_TOKEN":
         verdict = "PASS_A_SUBSTRATE" if a_qualified else "INVALID_REAL_LANGUAGE_SUBSTRATE"
     else:
         verdict = "B_COMPLETE_UNCOMPARED"
@@ -180,7 +198,10 @@ def main() -> None:
     checkpoint = args.output / "checkpoint.pt"
     torch.save(model.state_dict(), checkpoint)
     payload = {
-        "protocol": "REAL_LANGUAGE_INTERFACE_AB_v0.1",
+        "protocol": (
+            "REAL_LANGUAGE_STANDARD_KV_AB_v0.2" if args.value_head_multiplier == 1
+            else "REAL_LANGUAGE_INTERFACE_AB_v0.1"
+        ),
         "variant": args.variant,
         "verdict": verdict,
         "arguments": {

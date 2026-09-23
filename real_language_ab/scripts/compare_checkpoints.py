@@ -38,6 +38,7 @@ def load_model(args, variant: str, checkpoint: Path):
         producer_layers=4,
         reader_layers=4,
         local_window=16,
+        value_head_multiplier=args.value_head_multiplier,
     ).to(device="cuda", dtype=torch.bfloat16)
     del base
     model.load_state_dict(
@@ -85,6 +86,7 @@ def main() -> None:
     p.add_argument("--b-checkpoint", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--sequence-length", type=int, default=256)
+    p.add_argument("--value-head-multiplier", type=int, choices=(1, 2), default=2)
     p.add_argument("--count", type=int, default=64)
     args = p.parse_args()
     data = torch.load(args.data, map_location="cpu", weights_only=True)
@@ -96,8 +98,15 @@ def main() -> None:
     b_model = load_model(args, "B_PAIR_WIDE", args.b_checkpoint)
     b = evaluate(b_model, validation, args.sequence_length, args.count)
     payload = {
-        "protocol": "REAL_LANGUAGE_INTERFACE_AB_PAIRED_EVAL_v0.1",
-        "formal_training_verdict": "FAIL_PAIR_WIDE_PILOT",
+        "protocol": (
+            "REAL_LANGUAGE_STANDARD_KV_PAIRED_EVAL_v0.2" if args.value_head_multiplier == 1
+            else "REAL_LANGUAGE_INTERFACE_AB_PAIRED_EVAL_v0.1"
+        ),
+        "value_head_multiplier": args.value_head_multiplier,
+        "formal_training_verdict": (
+            "SEE_TRAINING_SUMMARIES" if args.value_head_multiplier == 1
+            else "FAIL_PAIR_WIDE_PILOT"
+        ),
         "a": {key: summarize(value) for key, value in a.items()},
         "b": {key: summarize(value) for key, value in b.items()},
         "paired_b_minus_a": {
