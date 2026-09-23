@@ -7,3 +7,4 @@ This directory is the only active experiment. Read `PROTOCOL.md` first.
 - `scripts/train_variant.py`: training, A gate, remote-context evaluation, and
   interface ablation.
 - `runs/`: compact summaries; checkpoints and token caches stay off GitHub.
+- `COST_MODEL.md`: address-width arithmetic and its implementation limits.
