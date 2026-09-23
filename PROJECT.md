@@ -22,9 +22,13 @@ completed. B−A validation NLL was `+0.91571` (paired bootstrap 95% CI
 failure: B added 91.8M dense compiler parameters and its gap was still
 shrinking. The 10–20M-token endpoint is on hold; `mla_pair/PROTOCOL_B2.md`
 freezes one final 1M-token headwise-compiler/full-coadapt viability pilot.
-That pilot has passed smokes and been dispatched, but has no result yet.
-GPU latency remains unmeasured. This branch remains within the same repository
-and does not alter the frozen CED results.
+That pilot completed: final A NLL `2.45599`, B2 NLL `2.91093`, paired
+B2−A `+0.45494` (95% CI `[+0.41569, +0.49546]`), outside the frozen `+0.10`
+margin. The last training quarter did not reduce the gap. This headwise
+one-state-per-pair implementation stops at the negative viability screen;
+the result does not establish a universal capacity limit. GPU latency remains
+unmeasured. This branch remains within the same repository and does not alter
+the frozen CED results.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 

@@ -7,9 +7,12 @@ a high-fidelity Qwen3 split A that passed its small NLL/cache gate, and the
 matched B pilot code and result. In the 98,304-token/arm pilot, B missed the
 predeclared NLL screen despite its 31.25% reference-cache reduction; no speedup
 or broad route-2 capacity failure is claimed. A bounded headwise/full-coadapt
-B2 follow-up is frozen in [`mla_pair/PROTOCOL_B2.md`](mla_pair/PROTOCOL_B2.md).
-Earlier synthetic,
-oracle, CED migration, and direct standard-KV A/B branches are frozen history.
+B2 follow-up is frozen in [`mla_pair/PROTOCOL_B2.md`](mla_pair/PROTOCOL_B2.md)
+and completed: after 1,048,576 tokens/arm, B2−A NLL was `+0.45494`, outside
+the `+0.10` screen margin. This specific implementation is stopped; no
+decode-latency result or universal architecture verdict is claimed. Earlier
+synthetic, oracle, CED migration, and direct standard-KV A/B branches are
+frozen history.
 
 The latest completed standard-KV direct pilot found B slightly better on
 held-out NLL but no robust remote-context gain or decode speed measurement.
@@ -34,8 +37,8 @@ model—read files in this order:
    latest completed A/B evidence (different architecture)
 4. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact historical context, claim boundary and
    file-routing instructions
-5. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
-   all three evidence stages
+5. [`RESULTS.md`](RESULTS.md): historical synthetic and early real-model
+   aggregate results; the route-2 result is in `mla_pair/README.md`
 6. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
 7. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
    experimental contract

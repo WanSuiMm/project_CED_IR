@@ -109,5 +109,24 @@ parameters), full Qwen3 co-adaptation, and 1,048,576 tokens/arm. It is a new
 protocol, not a continuation of the failed 91.8M-parameter compiler.
 Local and server correctness tests passed; the 16-token B2 full/cache BF16 KL
 was `0.003929` with exact persistent storage. One-step full-parameter A/B2
-training smokes passed. The frozen 1,048,576-token/arm run has been dispatched;
-no paired B2 NLL result is reported yet.
+training smokes passed. The frozen 1,048,576-token/arm run completed:
+
+| Training tokens/arm | A NLL | B2 NLL | Paired B2−A NLL |
+| ---: | ---: | ---: | ---: |
+| 0 | 2.77078 | 6.57233 | +3.80154 |
+| 262,144 | 2.49024 | 3.07173 | +0.58150 |
+| 524,288 | 2.49013 | 3.01098 | +0.52085 |
+| 786,432 | 2.45506 | 2.87651 | +0.42145 |
+| 1,048,576 | 2.45599 | 2.91093 | **+0.45494** |
+
+Both arms completed 4096 updates on the same nonrepeating token stream and
+32 held-out 256-token validation sequences. The final paired bootstrap 95% CI
+was `[+0.41569, +0.49546]`; B2 was worse on all 32 sequences. The frozen
+`+0.10` margin was missed, and the last quarter **increased** the gap by
+`0.03349`, giving `OUTSIDE_MARGIN_NO_CLEAR_LATE_IMPROVEMENT`. The B2 reference
+cache remains 31.25% smaller at even lengths, but there is no fused kernel or
+decode-latency result. This is a single-seed, 1M-token negative viability
+screen for this specific headwise linear one-state-per-pair implementation,
+not a general information-theoretic impossibility. Stop this route-2
+implementation; do not automatically start route 1 or enlarge the budget.
+Raw per-sequence summaries remain under the ignored `mla_pair/runs/` tree.
