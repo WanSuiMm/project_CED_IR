@@ -1,13 +1,16 @@
 # CED IR Research Project
 
-**Current scope:** the next result must directly compare real-language,
-co-adapted `A: N x d` against `B: N/2 x 2d`. Read [`SCOPE.md`](SCOPE.md).
-All synthetic, oracle, and migration branches below are frozen history.
+**Current scope:** route 2 asks whether MLA content can be stored at half the
+token rate while preserving one RoPE anchor per token. The new
+[`mla_pair/README.md`](mla_pair/README.md) contains only the reference operator,
+correctness tests, and converted-baseline quality gate. No Qwen3 MLA conversion,
+route-2 training result, or measured speedup exists yet. Earlier synthetic,
+oracle, CED migration, and direct standard-KV A/B branches are frozen history.
 
-The direct pilot is now complete: B is slightly better on held-out NLL and both
-models use the global interface, but A's remote-context gate is not robustly
-positive. The substrate is stopped rather than rescued. See
-[`real_language_ab/RESULTS.md`](real_language_ab/RESULTS.md).
+The latest completed standard-KV direct pilot found B slightly better on
+held-out NLL but no robust remote-context gain or decode speed measurement.
+It is not evidence for the new MLA route. See
+[`real_language_ab/RESULTS_STANDARD_KV_v0.2.md`](real_language_ab/RESULTS_STANDARD_KV_v0.2.md).
 
 This repository contains one research project on whether token-level address
 records can be replaced by smaller persistent interfaces without losing the
@@ -21,20 +24,22 @@ model—read files in this order:
 
 1. [`GPT_HANDOFF.md`](GPT_HANDOFF.md): latest incremental review range and
    changed evidence
-2. [`migration_v02/RESULTS.md`](migration_v02/RESULTS.md): latest
-   function-preserving homotopy qualification and stop decision
-3. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact task context, claim boundary and
+2. [`mla_pair/README.md`](mla_pair/README.md): active route-2 code and
+   current unqualified status
+3. [`real_language_ab/RESULTS_STANDARD_KV_v0.2.md`](real_language_ab/RESULTS_STANDARD_KV_v0.2.md):
+   latest completed A/B evidence (different architecture)
+4. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact historical context, claim boundary and
    file-routing instructions
-4. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
+5. [`RESULTS.md`](RESULTS.md): canonical aggregate results and verdicts across
    all three evidence stages
-5. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
-6. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
+6. [`ARCHITECTURE.md`](ARCHITECTURE.md): equations, invariants and code map
+7. [`protocol.md`](protocol.md) and [`configs/g1.json`](configs/g1.json): frozen
    experimental contract
-7. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
+8. [`src/ced_ir/model.py`](src/ced_ir/model.py) and
    [`src/ced_ir/synthetic.py`](src/ced_ir/synthetic.py): implementation
-8. [`real_model_audit/README.md`](real_model_audit/README.md): Qwen3 R0/R1
+9. [`real_model_audit/README.md`](real_model_audit/README.md): Qwen3 R0/R1
    oracle audit, code, and evidence
-9. [`tests/`](tests) and [`real_model_audit/tests/`](real_model_audit/tests):
+10. [`tests/`](tests) and [`real_model_audit/tests/`](real_model_audit/tests):
    executable correctness claims
 
 The large `test_samples*.jsonl` files are raw evidence. They should not be the
