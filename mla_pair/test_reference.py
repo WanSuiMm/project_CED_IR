@@ -86,6 +86,58 @@ class DualResolutionReferenceTest(unittest.TestCase):
         self._pair().square().mean().backward()
         self.assertGreater(float(self.compiler.linear.weight.grad.abs().sum()), 0)
 
+    def test_lse_backward_equals_explicit_anchor_backward(self):
+        qc = self.qc.clone().requires_grad_()
+        qr = self.qr.clone().requires_grad_()
+        content = self.content.clone().requires_grad_()
+        rope = self.rope.clone().requires_grad_()
+        vw = self.vw.clone().requires_grad_()
+        compiler = PairCompiler(self.dc).double()
+        upstream = torch.randn(self.batch, self.heads, self.length, self.dv,
+                               dtype=torch.float64)
+        reduced = pair_attention(qc, qr, content, rope, vw, compiler,
+                                 self.scale)
+        explicit = []
+        for t in range(self.length):
+            pairs = (t + 1) // 2
+            pair_c = compiler(content[:, 0:2 * pairs:2],
+                              content[:, 1:2 * pairs:2])
+            expanded = pair_c.repeat_interleave(2, dim=1)
+            if t % 2 == 0:
+                expanded = torch.cat((expanded, content[:, t:t + 1]), dim=1)
+            scores = (torch.einsum("bhd,bnd->bhn", qc[:, :, t], expanded)
+                      + torch.einsum("bhr,bnr->bhn", qr[:, :, t], rope[:, :t + 1]))
+            values = torch.einsum("bnd,hdv->bhnv", expanded, vw)
+            explicit.append(torch.einsum("bhn,bhnv->bhv",
+                                         (scores * self.scale).softmax(-1), values))
+        explicit = torch.stack(explicit, dim=2)
+        variables = (qc, qr, content, rope, vw,
+                     compiler.linear.weight, compiler.linear.bias)
+        grad_reduced = torch.autograd.grad((reduced * upstream).sum(),
+                                           variables, retain_graph=True)
+        grad_explicit = torch.autograd.grad((explicit * upstream).sum(), variables)
+        torch.testing.assert_close(reduced, explicit, rtol=1e-12, atol=1e-12)
+        for reduced_grad, explicit_grad in zip(grad_reduced, grad_explicit):
+            torch.testing.assert_close(reduced_grad, explicit_grad,
+                                       rtol=1e-11, atol=1e-11)
+
+    @unittest.skipUnless(torch.cuda.is_available(), "BF16 smoke requires CUDA")
+    def test_cuda_bf16_full_matches_incremental(self):
+        qc = self.qc.cuda().bfloat16()
+        qr = self.qr.cuda().bfloat16()
+        content = self.content.cuda().bfloat16()
+        rope = self.rope.cuda().bfloat16()
+        vw = self.vw.cuda().bfloat16()
+        compiler = PairCompiler(self.dc).cuda().bfloat16()
+        full = pair_attention(qc, qr, content, rope, vw, compiler, self.scale)
+        cache = PairCache()
+        for t in range(self.length):
+            cache = append_token(cache, content[:, t], rope[:, t], compiler)
+            step = pair_attention_step(qc[:, :, t], qr[:, :, t], cache,
+                                       vw, self.scale)
+            torch.testing.assert_close(step.float(), full[:, :, t].float(),
+                                       rtol=0.03, atol=0.03)
+
     def test_token_reference_is_causal(self):
         original = token_attention(self.qc, self.qr, self.content,
                                    self.rope, self.vw, self.scale)

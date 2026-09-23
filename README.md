@@ -2,9 +2,10 @@
 
 **Current scope:** route 2 asks whether MLA content can be stored at half the
 token rate while preserving one RoPE anchor per token. The new
-[`mla_pair/README.md`](mla_pair/README.md) contains only the reference operator,
-correctness tests, and converted-baseline quality gate. No Qwen3 MLA conversion,
-route-2 training result, or measured speedup exists yet. Earlier synthetic,
+[`mla_pair/README.md`](mla_pair/README.md) now contains the reference operator,
+a high-fidelity Qwen3 split A that passed its small NLL/cache gate, and the
+matched B pilot code. The A/B pilot was dispatched but has no reported result
+yet; no speedup is claimed. Earlier synthetic,
 oracle, CED migration, and direct standard-KV A/B branches are frozen history.
 
 The latest completed standard-KV direct pilot found B slightly better on
@@ -25,7 +26,7 @@ model—read files in this order:
 1. [`GPT_HANDOFF.md`](GPT_HANDOFF.md): latest incremental review range and
    changed evidence
 2. [`mla_pair/README.md`](mla_pair/README.md): active route-2 code and
-   current unqualified status
+   qualified A plus pending B pilot boundary
 3. [`real_language_ab/RESULTS_STANDARD_KV_v0.2.md`](real_language_ab/RESULTS_STANDARD_KV_v0.2.md):
    latest completed A/B evidence (different architecture)
 4. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact historical context, claim boundary and

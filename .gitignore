@@ -24,6 +24,7 @@ migration_v02/runs/**/*.log
 real_language_ab/data/
 real_language_ab/runs/**/checkpoint.pt
 real_language_ab/runs/**/*.log
+mla_pair/runs/
 
 # Editor and OS files.
 .DS_Store

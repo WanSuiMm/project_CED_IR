@@ -31,7 +31,8 @@ class PairCompiler(nn.Module):
     def forward(self, first: Tensor, second: Tensor) -> Tensor:
         if first.shape != second.shape or first.shape[-1] * 2 != self.linear.in_features:
             raise ValueError("pair latent shapes do not match compiler width")
-        return self.linear(torch.cat((first, second), dim=-1))
+        joined = torch.cat((first, second), dim=-1)
+        return self.linear(joined.to(self.linear.weight.dtype)).to(first.dtype)
 
 
 def _check(q_content: Tensor, q_rope: Tensor, content: Tensor, rope: Tensor,

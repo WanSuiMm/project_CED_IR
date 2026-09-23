@@ -11,11 +11,13 @@ shared-memory qualification. No 20M-token migration training was run.
 The latest completed direct real-language standard-KV A/B pilot passes its
 paired NLL non-inferiority gate at 256 tokens; remote-context use and decode
 speed remain unqualified. See `real_language_ab/RESULTS_STANDARD_KV_v0.2.md`.
-The active next route is dual-resolution MLA (`mla_pair/`): its reference
-operator and causal/cache tests are implemented, but Qwen3-to-MLA conversion,
-token-MLA quality qualification, A/B adaptation, and GPU speed measurements
-have not been completed. This is a new branch within this same repository;
-it does not alter the frozen CED results.
+The active next route is dual-resolution content/RoPE attention (`mla_pair/`).
+Its quality-first Qwen3 split A passed a 32×256-token NLL, full/cache parity,
+and runtime cache-shape gate without low-rank width compression. Pair B passed
+operator and cache smokes; a matched 98,304-token/arm adaptation screen was
+dispatched but has no result reported yet. GPU latency and a larger architecture
+endpoint are unrun. This branch remains within the same repository and does
+not alter the frozen CED results.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 
