@@ -21,6 +21,8 @@ def main() -> None:
     parser.add_argument("--tokens", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--length", type=int, default=16)
+    parser.add_argument("--compiler-kind", choices=("dense", "headwise_kv"),
+                        default="dense")
     args = parser.parse_args()
     if args.length < 2 or args.length % 2:
         raise ValueError("length must be even and >=2")
@@ -29,7 +31,7 @@ def main() -> None:
         args.model, cache_dir=str(args.cache_dir), local_files_only=True,
         dtype=torch.bfloat16, attn_implementation="sdpa").cuda().eval()
     convert_qwen3_to_split(model, 96)
-    convert_split_to_pair(model)
+    convert_split_to_pair(model, compiler_kind=args.compiler_kind)
     with torch.inference_mode():
         full = model(input_ids=tokens, use_cache=False).logits[:, -1].float()
         cache = PairDynamicCache(config=model.config)
@@ -41,6 +43,7 @@ def main() -> None:
     q = step.log_softmax(-1)
     result = {
         "status": "SMOKE_ONLY",
+        "compiler_kind": args.compiler_kind,
         "token_length": args.length,
         "full_to_cached_kl": float((p.exp() * (p - q)).sum()),
         "max_abs_logit_difference": float((full - step).abs().max()),

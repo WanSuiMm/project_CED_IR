@@ -17,7 +17,12 @@ and runtime cache-shape gate without low-rank width compression. Pair B passed
 operator and cache smokes; a matched 98,304-token/arm adaptation screen was
 completed. B−A validation NLL was `+0.91571` (paired bootstrap 95% CI
 `[+0.83633, +1.00060]`), outside the preset `+0.10` screen margin despite
-31.25% reference-cache savings. The larger training endpoint is on hold;
+31.25% reference-cache savings. This establishes
+`NAIVE_FULL_PAIR_COMPILER_SHORT_ADAPTATION_FAIL`, not a route-2 capacity
+failure: B added 91.8M dense compiler parameters and its gap was still
+shrinking. The 10–20M-token endpoint is on hold; `mla_pair/PROTOCOL_B2.md`
+freezes one final 1M-token headwise-compiler/full-coadapt viability pilot.
+That pilot has passed smokes and been dispatched, but has no result yet.
 GPU latency remains unmeasured. This branch remains within the same repository
 and does not alter the frozen CED results.
 

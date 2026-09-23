@@ -9,7 +9,7 @@ from __future__ import annotations
 from torch import Tensor
 from transformers.cache_utils import DynamicCache
 
-from .reference import PairCache, PairCompiler, append_token, cache_scalars
+from .reference import PairCache, append_token, cache_scalars
 
 
 class PairDynamicCache(DynamicCache):
@@ -21,7 +21,7 @@ class PairDynamicCache(DynamicCache):
         self.pair_layers: dict[int, PairCache] = {}
 
     def append_pair(self, layer_idx: int, content: Tensor, rope: Tensor,
-                    compiler: PairCompiler) -> PairCache:
+                    compiler) -> PairCache:
         previous = self.pair_layers.get(layer_idx, PairCache())
         updated = append_token(previous, content, rope, compiler)
         self.pair_layers[layer_idx] = updated

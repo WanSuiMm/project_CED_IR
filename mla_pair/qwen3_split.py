@@ -12,6 +12,7 @@ import torch.nn.functional as F
 from torch import Tensor, nn
 
 from .reference import PairCompiler
+from .headwise_compiler import HeadwiseKVPairCompiler
 
 
 def _rotate_half(x: Tensor) -> Tensor:
@@ -132,10 +133,17 @@ def convert_qwen3_to_split(model: nn.Module,
 class PairQwen3Attention(SplitQwen3Attention):
     """Pair-compiled content with separate per-token RoPE keys (training path)."""
 
-    def __init__(self, source: SplitQwen3Attention):
+    def __init__(self, source: SplitQwen3Attention, compiler_kind: str = "dense"):
         super().__init__(source, source.rope_dim_per_head)
-        self.compiler = PairCompiler(self.content_dim).to(
-            device=source.q_proj.weight.device)
+        if compiler_kind == "dense":
+            compiler = PairCompiler(self.content_dim)
+        elif compiler_kind == "headwise_kv":
+            compiler = HeadwiseKVPairCompiler(
+                self.num_kv_heads, self.head_dim - self.rope_dim_per_head,
+                self.head_dim)
+        else:
+            raise ValueError(f"unknown compiler kind: {compiler_kind}")
+        self.compiler = compiler.to(device=source.q_proj.weight.device)
 
     def forward(self, hidden_states: Tensor,
                 position_embeddings: tuple[Tensor, Tensor],
@@ -244,12 +252,12 @@ class PairQwen3Attention(SplitQwen3Attention):
         return self.o_proj(output)
 
 
-def convert_split_to_pair(model: nn.Module) -> nn.Module:
+def convert_split_to_pair(model: nn.Module, compiler_kind: str = "dense") -> nn.Module:
     if not all(isinstance(layer.self_attn, SplitQwen3Attention)
                for layer in model.model.layers):
         raise ValueError("pair conversion requires a split-Qwen3 A model")
     for layer in model.model.layers:
         source = layer.self_attn
-        layer.self_attn = PairQwen3Attention(source).to(
+        layer.self_attn = PairQwen3Attention(source, compiler_kind=compiler_kind).to(
             device=source.q_proj.weight.device)
     return model

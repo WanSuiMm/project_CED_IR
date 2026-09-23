@@ -6,7 +6,9 @@ token rate while preserving one RoPE anchor per token. The new
 a high-fidelity Qwen3 split A that passed its small NLL/cache gate, and the
 matched B pilot code and result. In the 98,304-token/arm pilot, B missed the
 predeclared NLL screen despite its 31.25% reference-cache reduction; no speedup
-is claimed. Earlier synthetic,
+or broad route-2 capacity failure is claimed. A bounded headwise/full-coadapt
+B2 follow-up is frozen in [`mla_pair/PROTOCOL_B2.md`](mla_pair/PROTOCOL_B2.md).
+Earlier synthetic,
 oracle, CED migration, and direct standard-KV A/B branches are frozen history.
 
 The latest completed standard-KV direct pilot found B slightly better on

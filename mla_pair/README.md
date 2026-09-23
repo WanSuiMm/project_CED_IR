@@ -72,7 +72,7 @@ engineering parity rule was changed to extra KL relative to native `<=0.001`;
 cache growth still had to equal `d_C+d_R`. This numerical rule change is
 recorded explicitly, not treated as a scientific success discovered post hoc.
 
-## B pilot result: small adaptation screen failed
+## Prior B pilot: dense-compiler short adaptation failed
 
 `smoke_pair_runtime.py` verified a 16-token B cache with exactly 630,784
 persistent scalars across all 28 layers and BF16 bytes of 1,261,568, matching
@@ -95,8 +95,19 @@ the preset `+0.10` screen margin. B improved substantially from its poor
 initialization, but did not catch A at this budget. Its additional 91,786,240
 parameters are the pair compilers. The measured persistent reference-cache
 ratio was `0.6875` for even sequence lengths; this is not a GPU latency result.
-The 10–20M-token endpoint is on hold rather than silently launched. The result
-rejects this **small-budget adaptation screen**, not every possible trained
-pair-content architecture. Raw per-sequence summaries and checkpoints remain
+The 10–20M-token endpoint is on hold rather than silently launched. The status
+is `NAIVE_FULL_PAIR_COMPILER_SHORT_ADAPTATION_FAIL`: this result does **not**
+test the capacity of a well-adapted one-state-per-pair model. The initial
+B−A gap was `+2.55975` and the final gap `+0.91571`, so there is no evidence
+of saturation. Raw per-sequence summaries and checkpoints remain
 in the local/remote run directory, excluded from GitHub because the generated
 files contain machine-specific paths.
+
+The last bounded route-2 viability test is specified in
+[`PROTOCOL_B2.md`](PROTOCOL_B2.md): a separate headwise K/V compiler (~7.83M
+parameters), full Qwen3 co-adaptation, and 1,048,576 tokens/arm. It is a new
+protocol, not a continuation of the failed 91.8M-parameter compiler.
+Local and server correctness tests passed; the 16-token B2 full/cache BF16 KL
+was `0.003929` with exact persistent storage. One-step full-parameter A/B2
+training smokes passed. The frozen 1,048,576-token/arm run has been dispatched;
+no paired B2 NLL result is reported yet.
