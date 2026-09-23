@@ -15,9 +15,11 @@ The active next route is dual-resolution content/RoPE attention (`mla_pair/`).
 Its quality-first Qwen3 split A passed a 32×256-token NLL, full/cache parity,
 and runtime cache-shape gate without low-rank width compression. Pair B passed
 operator and cache smokes; a matched 98,304-token/arm adaptation screen was
-dispatched but has no result reported yet. GPU latency and a larger architecture
-endpoint are unrun. This branch remains within the same repository and does
-not alter the frozen CED results.
+completed. B−A validation NLL was `+0.91571` (paired bootstrap 95% CI
+`[+0.83633, +1.00060]`), outside the preset `+0.10` screen margin despite
+31.25% reference-cache savings. The larger training endpoint is on hold;
+GPU latency remains unmeasured. This branch remains within the same repository
+and does not alter the frozen CED results.
 
 Case ID: `CED_IR_LENGTH_WIDTH_PROBE_V01`
 

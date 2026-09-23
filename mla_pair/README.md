@@ -72,15 +72,31 @@ engineering parity rule was changed to extra KL relative to native `<=0.001`;
 cache growth still had to equal `d_C+d_R`. This numerical rule change is
 recorded explicitly, not treated as a scientific success discovered post hoc.
 
-## B pilot status
+## B pilot result: small adaptation screen failed
 
 `smoke_pair_runtime.py` verified a 16-token B cache with exactly 630,784
 persistent scalars across all 28 layers and BF16 bytes of 1,261,568, matching
 the pair-content formula. Its full/cache KL was `0.001235`; this is an
 engineering smoke, not B quality evidence. One-step A/B training smokes pass.
-A matched pilot of 384 updates and 98,304 distinct training tokens per arm has
-been dispatched on the 5090. `train_variant.py` uses the same split-Qwen A
+A matched pilot of 384 updates and 98,304 distinct training tokens per arm
+completed on the 5090. `train_variant.py` uses the same split-Qwen A
 initialization, token order, LoRA configuration and optimizer settings in both
 arms; only B adds the FP32 pair compiler. The compiler's lower learning rate
-is `1e-6` in both run configurations (A has no compiler). The run is a screen,
-not the 10–20M-token architecture endpoint; no B−A NLL result is claimed yet.
+is `1e-6` in both run configurations (A has no compiler).
+
+| Variant | Initial validation NLL | Final validation NLL | Trainable parameters |
+| --- | ---: | ---: | ---: |
+| A, token content | 2.77078 | 2.43202 | 5,046,272 |
+| B, paired content | 5.33054 | 3.34773 | 96,832,512 |
+
+The paired B−A final NLL was `+0.91571` nats/token on 32 held-out 256-token
+sequences (paired bootstrap 95% CI `[+0.83633, +1.00060]`). This is outside
+the preset `+0.10` screen margin. B improved substantially from its poor
+initialization, but did not catch A at this budget. Its additional 91,786,240
+parameters are the pair compilers. The measured persistent reference-cache
+ratio was `0.6875` for even sequence lengths; this is not a GPU latency result.
+The 10–20M-token endpoint is on hold rather than silently launched. The result
+rejects this **small-budget adaptation screen**, not every possible trained
+pair-content architecture. Raw per-sequence summaries and checkpoints remain
+in the local/remote run directory, excluded from GitHub because the generated
+files contain machine-specific paths.

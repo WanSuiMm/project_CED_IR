@@ -4,8 +4,9 @@
 token rate while preserving one RoPE anchor per token. The new
 [`mla_pair/README.md`](mla_pair/README.md) now contains the reference operator,
 a high-fidelity Qwen3 split A that passed its small NLL/cache gate, and the
-matched B pilot code. The A/B pilot was dispatched but has no reported result
-yet; no speedup is claimed. Earlier synthetic,
+matched B pilot code and result. In the 98,304-token/arm pilot, B missed the
+predeclared NLL screen despite its 31.25% reference-cache reduction; no speedup
+is claimed. Earlier synthetic,
 oracle, CED migration, and direct standard-KV A/B branches are frozen history.
 
 The latest completed standard-KV direct pilot found B slightly better on
@@ -25,8 +26,8 @@ model—read files in this order:
 
 1. [`GPT_HANDOFF.md`](GPT_HANDOFF.md): latest incremental review range and
    changed evidence
-2. [`mla_pair/README.md`](mla_pair/README.md): active route-2 code and
-   qualified A plus pending B pilot boundary
+2. [`mla_pair/README.md`](mla_pair/README.md): route-2 code, qualified A,
+   and the negative small B pilot boundary
 3. [`real_language_ab/RESULTS_STANDARD_KV_v0.2.md`](real_language_ab/RESULTS_STANDARD_KV_v0.2.md):
    latest completed A/B evidence (different architecture)
 4. [`GPT_CONTEXT.md`](GPT_CONTEXT.md): compact historical context, claim boundary and
